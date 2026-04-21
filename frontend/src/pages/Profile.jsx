@@ -1,14 +1,17 @@
 import React, { useState } from "react";
 import "../styles/Profile.css";
 import profileImg from "../assets/profile.jpg";
-import githubLogo from "../assets/github-logo.jpg";
 import mediumLogo from "../assets/medium-logo.png";
-import stackoverflowLogo from "../assets/stackoverflow-logo.jpg";
 
 export default function ProfileCard() {
   // ---------- State for interests ----------
   const [interests, setInterests] = useState([".NET", "JAVA", "Angular", "ReactJS", "NodeJS", "Python", "Django", "Machine Learning", "Data Science", "DevOps", "Cloud Computing", "Cybersecurity", "Blockchain", "AI", "Web Development"]);
   const [newInterest, setNewInterest] = useState("");
+
+  // ---------- State for social profiles ----------
+  const [selectedPlatform, setSelectedPlatform] = useState("Medium");
+  const [mediumUrl, setMediumUrl] = useState("");
+  const [savedMediumUrl, setSavedMediumUrl] = useState("");
 
   const handleAddInterest = () => {
     const trimmed = newInterest.trim();
@@ -27,11 +30,17 @@ export default function ProfileCard() {
     }
   };
 
-  const socials = [
-    { label: "GitHub", link: "https://github.com/Ashutosh-Kumar-Shaw", logo: githubLogo },
-    { label: "Medium", link: "https://medium.com/xyz", logo: mediumLogo },
-    { label: "StackOverFlow", link: "https://stackoverflow.com/users/16928667/ashutosh-kumar-shaw", logo: stackoverflowLogo },
-  ];
+  const handleSubmitSocialUrl = (e) => {
+    e.preventDefault();
+    const trimmed = mediumUrl.trim();
+    if (!trimmed) {
+      alert("Please enter a valid URL");
+      return;
+    }
+    console.log(`${selectedPlatform} URL submitted:`, trimmed);
+    setSavedMediumUrl(trimmed);
+    setMediumUrl("");
+  };
 
   return (
     <div className="wrapper">
@@ -57,21 +66,70 @@ export default function ProfileCard() {
           <button className="text-l sm:text-2l font-light text-gray-70 add-post-btn hover:scale-10">+</button>
         </div>
 
-        <div className="socials">
-          {socials.map((item, index) => (
-            <a
-              key={index}
-              href={item.link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center border border-green-300 rounded-xl overflow-hidden post-link hover:shadow-md transition-all"
+        {/* Social Profiles Section */}
+        <div className="px-6 py-4">
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-4">Social Profiles</h2>
+          
+          <form onSubmit={handleSubmitSocialUrl} className="space-y-4">
+            {/* Platform Dropdown */}
+            <div className="form-group">
+              <label htmlFor="platform" className="block text-sm font-semibold text-gray-700 mb-2">
+                Select Platform
+              </label>
+              <select
+                id="platform"
+                value={selectedPlatform}
+                onChange={(e) => setSelectedPlatform(e.target.value)}
+                className="w-full border border-green-400 rounded-lg px-4 py-2 outline-none text-base focus:ring-2 focus:ring-green-300 bg-white"
+              >
+                <option value="Medium">Medium</option>
+              </select>
+            </div>
+
+            {/* URL Input */}
+            <div className="form-group">
+              <label htmlFor="socialUrl" className="block text-sm font-semibold text-gray-700 mb-2">
+                {selectedPlatform} Profile URL
+              </label>
+              <input
+                id="socialUrl"
+                type="url"
+                value={mediumUrl}
+                onChange={(e) => setMediumUrl(e.target.value)}
+                placeholder={`https://medium.com/@your-profile`}
+                className="w-full border border-green-400 rounded-lg px-4 py-3 sm:py-2 outline-none text-base focus:ring-2 focus:ring-green-300"
+              />
+            </div>
+
+            {/* Submit Button */}
+            <button
+              type="submit"
+              className="px-6 py-3 sm:py-2 rounded-lg border border-green-400 font-semibold text-base bg-green-50 hover:bg-green-100 transition-colors"
             >
-              <div className="px-6 py-4 font-semibold text-gray-700 border-r border-green-300 flex items-center gap-3 badge bg-gradient-to-r from-green-50 to-transparent hover:bg-green-100">
-                <img src={item.logo} alt={item.label} className="w-7 h-7 icon" />
-                <span className="text-lg">{item.label}</span>
-              </div>
-            </a>
-          ))}
+              Add Social Profile
+            </button>
+          </form>
+
+          {/* Display Saved Medium Profile */}
+          {savedMediumUrl && (
+            <div className="mt-6 pt-6 border-t border-green-300">
+              <h3 className="text-lg font-semibold text-gray-800 mb-3">Your Profiles</h3>
+              <a
+                href={savedMediumUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center border border-green-300 rounded-xl overflow-hidden post-link hover:shadow-md transition-all bg-white"
+              >
+                <div className="px-6 py-4 font-semibold text-gray-700 border-r border-green-300 flex items-center gap-3 badge bg-gradient-to-r from-green-50 to-transparent hover:bg-green-100">
+                  <img src={mediumLogo} alt="Medium" className="w-7 h-7 icon" />
+                  <div className="flex flex-col">
+                    <span className="text-lg">Medium</span>
+                    <span className="text-xs text-gray-600">{savedMediumUrl}</span>
+                  </div>
+                </div>
+              </a>
+            </div>
+          )}
         </div>
 
         {/* Interested Area */}
