@@ -184,6 +184,48 @@ button {
   color: #8e8e8e;
 }
 
+/* Options menu dropdown */
+.options-container {
+  position: relative;
+}
+
+.options-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  border: 1px solid #dbdbdb;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  min-width: 120px;
+  padding: 4px 0;
+}
+
+.option-item {
+  width: 100%;
+  padding: 8px 16px;
+  background: none;
+  border: none;
+  text-align: left;
+  font-size: 14px;
+  cursor: pointer;
+  color: #262626;
+  transition: background-color 0.2s;
+}
+
+.option-item:hover {
+  background-color: #f8f8f8;
+}
+
+.delete-option {
+  color: #ed4956;
+}
+
+.delete-option:hover {
+  background-color: #ffeef0;
+}
+
 /* Comment action buttons - Small inline buttons */
 .comment-action-btn {
   background: none;

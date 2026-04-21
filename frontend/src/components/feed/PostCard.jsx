@@ -21,6 +21,7 @@ const PostCard = ({
   onComment,
   onShare,
   onAddOption,
+  onDelete,
   onLikeComment,
   onReplyComment,
   currentUser, // { name, avatar } - the user who will comment
@@ -33,6 +34,7 @@ const PostCard = ({
   const [showComments, setShowComments] = useState(false);
   const [commentText, setCommentText] = useState("");
   const [isLoading, setIsLoading] = useState(delay > 0);
+  const [showOptions, setShowOptions] = useState(false);
 
   useEffect(() => {
     if (!delay) return;
@@ -40,6 +42,18 @@ const PostCard = ({
     const t = setTimeout(() => setIsLoading(false), delay);
     return () => clearTimeout(t);
   }, [delay]);
+
+  // Close options menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (showOptions && !event.target.closest('.options-container')) {
+        setShowOptions(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showOptions]);
 
   const handleLike = () => {
     setIsLiked(!isLiked);
@@ -70,9 +84,14 @@ const PostCard = ({
   };
 
   const handleAddOption = () => {
-    if (onAddOption) {
-      onAddOption();
+    setShowOptions(!showOptions);
+  };
+
+  const handleDelete = () => {
+    if (onDelete) {
+      onDelete();
     }
+    setShowOptions(false);
   };
 
   const formatTimestamp = (timestamp) => {
@@ -147,13 +166,25 @@ const PostCard = ({
             <p className="post-timestamp">{formatTimestamp(timestamp)}</p>
           </div>
         </div>
-        <button
-          className="options-btn"
-          onClick={handleAddOption}
-          title="More options"
-        >
-          ⋯
-        </button>
+        <div className="options-container">
+          <button
+            className="options-btn"
+            onClick={handleAddOption}
+            title="More options"
+          >
+            ⋯
+          </button>
+          {showOptions && (
+            <div className="options-menu">
+              <button 
+                className="option-item delete-option"
+                onClick={handleDelete}
+              >
+                Delete Post
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Caption */}

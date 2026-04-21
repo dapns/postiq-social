@@ -8,6 +8,7 @@ const PostFeed = ({
   onComment,
   onShare,
   onAddOption,
+  onDelete,
   currentUser, // { name, avatar } - the current user for comment box
 }) => {
   return (
@@ -27,6 +28,7 @@ const PostFeed = ({
             onComment={(text) => onComment && onComment(post.id || index, text)}
             onShare={() => onShare && onShare(post.id || index)}
             onAddOption={() => onAddOption && onAddOption(post.id || index)}
+            onDelete={() => onDelete && onDelete(post.id || index)}
             onLikeComment={(commentId) => console.log(`Liked comment ${commentId}`)}
             onReplyComment={(commentId, text) => console.log(`Replied to comment ${commentId}:`, text)}
             currentUser={currentUser}
