@@ -1,0 +1,378 @@
+/* Global Button Styles */
+
+/* Base button reset and common styles */
+button {
+  font-family: inherit;
+  transition: all 0.2s ease;
+}
+
+/* Primary buttons - Main CTA */
+.btn-primary {
+  background-color: #1877f2;
+  color: #fff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: #165ac4;
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Secondary buttons - Alternative action */
+.btn-secondary {
+  background: #f3f4f6;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 14px;
+  color: #374151;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: #e5e7eb;
+}
+
+.btn-secondary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Action buttons - Icon buttons in posts */
+.action-btn {
+  background: none;
+  border: none;
+  padding: 8px 4px;
+  cursor: pointer;
+  font-size: 18px;
+  color: #262626;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.action-btn:hover {
+  color: #8e8e8e;
+}
+
+.action-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* Like button - Special state */
+.action-btn.like-btn.liked {
+  color: #ed4956;
+}
+
+.action-btn.like-btn.liked .icon {
+  animation: heartBeat 0.3s ease;
+}
+
+@keyframes heartBeat {
+  0% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(1.3);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Icon buttons - Toolbar buttons */
+.icon-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: 1px solid #9ca3af;
+  color: #111827;
+  padding: 3px 5px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 13px;
+  transition: all 0.2s;
+}
+
+.icon-btn:hover {
+  border-color: #6b7280;
+  background: #f9fafb;
+}
+
+.icon-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Send/Share button - Primary action in comments */
+.btn-send {
+  background: none;
+  border: none;
+  color: #0095f6;
+  cursor: pointer;
+  padding: 4px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.btn-send:hover:not(:disabled) {
+  color: #0084d9;
+}
+
+.btn-send:disabled {
+  color: #ccc;
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* Share button - Circular primary button */
+.share-btn {
+  background: #1877f2;
+  border: none;
+  padding: 8px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.share-btn:hover:not(:disabled) {
+  background: #165ac4;
+}
+
+.share-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Options button - More actions menu */
+.options-btn {
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 8px 4px;
+  color: #262626;
+  transition: all 0.2s;
+}
+
+.options-btn:hover {
+  color: #8e8e8e;
+}
+
+/* Options menu dropdown */
+.options-container {
+  position: relative;
+}
+
+.options-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  border: 1px solid #dbdbdb;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  min-width: 120px;
+  padding: 4px 0;
+}
+
+.option-item {
+  width: 100%;
+  padding: 8px 16px;
+  background: none;
+  border: none;
+  text-align: left;
+  font-size: 14px;
+  cursor: pointer;
+  color: #262626;
+  transition: background-color 0.2s;
+}
+
+.option-item:hover {
+  background-color: #f8f8f8;
+}
+
+.delete-option {
+  color: #ed4956;
+}
+
+.delete-option:hover {
+  background-color: #ffeef0;
+}
+
+/* Comment action buttons - Small inline buttons */
+.comment-action-btn {
+  background: none;
+  border: none;
+  color: #8e8e8e;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.comment-action-btn:hover {
+  color: #262626;
+}
+
+.comment-action-btn.like-comment.liked {
+  color: #ed4956;
+}
+
+/* Reply action buttons - Reply box buttons */
+.reply-submit,
+.reply-cancel {
+  padding: 6px 14px;
+  border-radius: 4px;
+  border: none;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.reply-submit {
+  background-color: #0095f6;
+  color: white;
+}
+
+.reply-submit:hover:not(:disabled) {
+  background-color: #0084d9;
+}
+
+.reply-submit:disabled {
+  background-color: #e4e6eb;
+  color: #bcc0c4;
+  cursor: not-allowed;
+}
+
+.reply-cancel {
+  background-color: #efefef;
+  color: #262626;
+}
+
+.reply-cancel:hover {
+  background-color: #dbdbdb;
+}
+
+/* Remove button - Destructive inline action */
+.remove-btn {
+  background: none;
+  border: none;
+  color: #d4d4d4;
+  cursor: pointer;
+  font-size: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  padding: 2px;
+}
+
+.remove-btn:hover {
+  color: #ff6a6a;
+}
+
+/* Load more button - Secondary action in feeds */
+.load-more-comments {
+  width: 100%;
+  padding: 10px 12px;
+  background: #f5f5f5;
+  border: 1px solid #efefef;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #0095f6;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.load-more-comments:hover {
+  background-color: #efefef;
+}
+
+/* Icon sizing utilities */
+.icon {
+  width: 18px;
+  height: 18px;
+  color: #6b7280;
+}
+
+.icon-white {
+  color: #fff;
+  width: 18px;
+  height: 18px;
+}
+
+.hi-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.heart-icon,
+.chat-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.bookmark-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.share-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.comment-heart-icon {
+  width: 14px;
+  height: 14px;
+}
+
+.send-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.attachment-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  color: #9ca3af;
+}
+
+.remove-icon {
+  width: 14px;
+  height: 14px;
+}
