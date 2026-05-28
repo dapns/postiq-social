@@ -9,6 +9,7 @@ import {
   Paperclip,
   X,
   Sparkles,
+  Loader,
 } from "lucide-react";
 
 const demoContent = `✨ Exploring the Latest Web Development Trends
@@ -76,7 +77,7 @@ const UploadPanel = ({ onUpload, onGeneratePost }) => {
         content: {
           text: demoText,
           image: null,
-          summary: demoText.slice(0, 120),
+          summary: null,
         },
         likes: 0,
         comments: 0,
@@ -109,7 +110,7 @@ const UploadPanel = ({ onUpload, onGeneratePost }) => {
             file && file.type && file.type.startsWith("image/")
               ? previewUrl
               : null,
-          summary: text ? text.slice(0, 120) : "",
+          summary: null,
         },
         likes: 0,
         comments: 0,
@@ -178,17 +179,26 @@ const UploadPanel = ({ onUpload, onGeneratePost }) => {
             title="Got a draft, idea, or doc? Drop it here and I’ll blog it up."
             value={text}
             onChange={(e) => setText(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-                submitPost();
-              }
-            }}
           />
         </div>
+        {/* Post button hidden for now */}
+        <button
+          className="post-submit-btn"
+          title="Post"
+          onClick={submitPost}
+          disabled={generating || (!text && !file)}
+          style={{ display: 'none' }}
+        >
+          {generating ? (
+            <Loader className="icon icon-white spin" size={18} />
+          ) : (
+            <Send className="icon icon-white" size={18} />
+          )}
+        </button>
+        {/* AI Generate button hidden for now */}
         <button
           className="share-btn"
-          title="Share"
+          title="AI Generate"
           onClick={handleShareClick}
           disabled={generating}
         >
