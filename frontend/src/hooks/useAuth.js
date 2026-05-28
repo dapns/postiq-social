@@ -57,7 +57,7 @@ export const useAuth = () => {
 
       // Fetch and set user profile after successful login
       try {
-        const profile = await AuthService.getProfile(response.accessToken);
+        const profile = await AuthService.getProfile();
         dispatch(setUser(profile));
       } catch (profileErr) {
         console.warn('Failed to fetch user profile after login', profileErr);
@@ -93,9 +93,7 @@ export const useAuth = () => {
   const logoutAll = async () => {
     dispatch(logoutStart());
     try {
-      if (accessToken) {
-        await AuthService.logoutAll(accessToken);
-      }
+      await AuthService.logoutAll();
       dispatch(logoutSuccess());
     } catch (err) {
       dispatch(logoutFailure(err.message));
@@ -161,11 +159,11 @@ export const initializeAuth = async (dispatch) => {
     if (!refreshToken) return;
     const response = await AuthService.refreshToken(refreshToken);
     dispatch(loginSuccess(response));
-    try {
+    try { 
       if (response.refreshToken) sessionStorage.setItem('refreshToken', response.refreshToken);
     } catch {}
     try {
-      const profile = await AuthService.getProfile(response.accessToken);
+      const profile = await AuthService.getProfile();
       dispatch(setUser(profile));
     } catch (profileErr) {
       console.warn('Failed to fetch profile during init', profileErr);

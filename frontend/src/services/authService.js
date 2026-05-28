@@ -4,6 +4,7 @@
  */
 
 import { API_CONFIG, getApiUrl } from '@/config/apiConfig';
+import httpClient from '@/lib/httpClient';
 
 class AuthService {
   /**
@@ -113,19 +114,7 @@ class AuthService {
    */
   static async logoutAll(accessToken) {
     try {
-      const response = await fetch(getApiUrl(API_CONFIG.ENDPOINTS.AUTH.LOGOUT_ALL), {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${accessToken}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error('Logout all failed');
-      }
-
-      return await response.json();
+      return await httpClient.request(API_CONFIG.ENDPOINTS.AUTH.LOGOUT_ALL, { method: 'POST' });
     } catch (error) {
       throw error;
     }
@@ -134,21 +123,9 @@ class AuthService {
   /**
    * Get user profile
    */
-  static async getProfile(accessToken) {
+  static async getProfile() {
     try {
-      const response = await fetch(getApiUrl(API_CONFIG.ENDPOINTS.AUTH.GET_PROFILE), {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${accessToken}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch profile');
-      }
-
-      return await response.json();
+      return await httpClient.request(API_CONFIG.ENDPOINTS.AUTH.GET_PROFILE, { method: 'GET' });
     } catch (error) {
       throw error;
     }
@@ -257,22 +234,12 @@ class AuthService {
   /**
    * Change password
    */
-  static async changePassword(accessToken, currentPassword, newPassword) {
+  static async changePassword(currentPassword, newPassword) {
     try {
-      const response = await fetch(getApiUrl(API_CONFIG.ENDPOINTS.AUTH.CHANGE_PASSWORD), {
+      return await httpClient.request(API_CONFIG.ENDPOINTS.AUTH.CHANGE_PASSWORD, {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${accessToken}`,
-          'Content-Type': 'application/json',
-        },
         body: JSON.stringify({ currentPassword, newPassword }),
       });
-
-      if (!response.ok) {
-        throw new Error('Password change failed');
-      }
-
-      return await response.json();
     } catch (error) {
       throw error;
     }
