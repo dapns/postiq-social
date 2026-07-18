@@ -12,7 +12,6 @@ export const API_CONFIG = {
   // API Endpoints
   ENDPOINTS: {
     AUTH: {
-      REGISTER: '/api/auth/register',
       LOGIN: '/api/auth/login',
       REFRESH: '/api/auth/refresh',
       LOGOUT: '/api/auth/revoke',
@@ -30,6 +29,9 @@ export const API_CONFIG = {
       REQUEST_PHONE: '/api/auth/phone/request',
       CONFIRM_PHONE: '/api/auth/phone/confirm',
       EXTERNAL_PROVIDERS: '/api/auth/external/providers',
+    },
+    USER: {
+      REGISTER: '/api/user/register',
     },
   },
 };

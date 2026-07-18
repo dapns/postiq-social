@@ -12,7 +12,7 @@ class AuthService {
    */
   static async register(data) {
     try {
-      const response = await fetch(getApiUrl(API_CONFIG.ENDPOINTS.AUTH.REGISTER), {
+      const response = await fetch(getApiUrl(API_CONFIG.ENDPOINTS.USER.REGISTER), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
