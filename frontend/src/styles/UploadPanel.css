@@ -245,3 +245,175 @@
     font-size: 13px;
   }
 }
+
+/* Post Submit Button */
+.post-submit-btn {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: #0095f6;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.post-submit-btn:hover:not(:disabled) {
+  background: #0077d6;
+  transform: scale(1.05);
+}
+
+.post-submit-btn:disabled {
+  background: #c8c8c8;
+  cursor: not-allowed;
+}
+
+/* Share / AI Button */
+.share-btn {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: #1877f2;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.share-btn:hover:not(:disabled) {
+  background: #1565d8;
+  transform: scale(1.05);
+}
+
+.share-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Shared icon utilities */
+.icon-white {
+  color: white;
+}
+
+.share-input {
+  border: none;
+  background: none;
+  font-size: 14px;
+  outline: none;
+  color: #262626;
+  font-family: inherit;
+}
+
+.share-input::placeholder {
+  color: #8e8e8e;
+}
+
+/* Icon button in prompt box */
+.icon-btn {
+  background: none;
+  border: 1px solid #e6e6e6;
+  border-radius: 6px;
+  padding: 4px 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #8e8e8e;
+  transition: all 0.2s;
+}
+
+.icon-btn:hover {
+  border-color: #bdbdbd;
+  color: #262626;
+}
+
+.attachment-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.attachment-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #f0f0f0;
+  border-radius: 16px;
+  padding: 2px 10px;
+  font-size: 12px;
+  color: #262626;
+}
+
+.remove-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  color: #8e8e8e;
+}
+
+.remove-icon {
+  width: 14px;
+  height: 14px;
+}
+
+/* Button styles */
+.btn-primary {
+  background: #1877f2;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: #1565d8;
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background: none;
+  color: #5a6269;
+  border: 1px solid #e6e6e6;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: #f5f5f5;
+}
+
+.btn-secondary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
