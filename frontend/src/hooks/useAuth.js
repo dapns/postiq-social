@@ -31,14 +31,17 @@ export const useAuth = () => {
     (state) => state.auth
   );
 
-  const register = async (email, password, userName, phoneNumber) => {
+  const register = async (email, password, firstName, middleName, lastName, phoneNumber, referralCode) => {
     dispatch(registerStart());
     try {
       const response = await AuthService.register({
         email,
         password,
-        userName,
+        firstName,
+        middleName,
+        lastName,
         phoneNumber,
+        referralCode,
       });
       dispatch(registerSuccess());
       return response;

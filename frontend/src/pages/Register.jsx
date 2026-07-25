@@ -12,8 +12,11 @@ const Register = () => {
     email: '',
     password: '',
     confirmPassword: '',
-    userName: '',
+    firstName: '',
+    middleName: '',
+    lastName: '',
     phoneNumber: '',
+    referralCode: '',
   });
   const [errors, setErrors] = useState({});
 
@@ -42,12 +45,32 @@ const Register = () => {
       newErrors.confirmPassword = 'Passwords do not match';
     }
 
-    if (formData.userName && formData.userName.length > 256) {
-      newErrors.userName = 'Username must be less than 256 characters';
+    if (!formData.firstName.trim()) {
+      newErrors.firstName = 'First name is required';
+    } else if (formData.firstName.length > 50) {
+      newErrors.firstName = 'First name must be less than 50 characters';
     }
 
-    if (formData.phoneNumber && formData.phoneNumber.length > 32) {
+    if (formData.middleName.length > 50) {
+      newErrors.middleName = 'Middle name must be less than 50 characters';
+    }
+
+    if (!formData.lastName.trim()) {
+      newErrors.lastName = 'Last name is required';
+    } else if (formData.lastName.length > 50) {
+      newErrors.lastName = 'Last name must be less than 50 characters';
+    }
+
+    if (!formData.phoneNumber.trim()) {
+      newErrors.phoneNumber = 'Phone number is required';
+    } else if (formData.phoneNumber.length > 32) {
       newErrors.phoneNumber = 'Phone number must be less than 32 characters';
+    }
+
+    if (!formData.referralCode.trim()) {
+      newErrors.referralCode = 'Referral code is required';
+    } else if (formData.referralCode.length > 100) {
+      newErrors.referralCode = 'Referral code must be less than 100 characters';
     }
 
     setErrors(newErrors);
@@ -80,8 +103,11 @@ const Register = () => {
       await register(
         formData.email,
         formData.password,
-        formData.userName || undefined,
-        formData.phoneNumber || undefined
+        formData.firstName.trim(),
+        formData.middleName.trim(),
+        formData.lastName.trim(),
+        formData.phoneNumber.trim(),
+        formData.referralCode.trim()
       );
       showSuccessToast('Registration successful! Redirecting to login...');
       setTimeout(() => {
@@ -120,28 +146,64 @@ const Register = () => {
               {errors.email && <span className="form-error">{errors.email}</span>}
             </div>
 
-            {/* Username Field */}
+            {/* First Name Field */}
             <div className="form-group">
-              <label htmlFor="userName" className="form-label">
-                Username
+              <label htmlFor="firstName" className="form-label">
+                First Name <span className="required">*</span>
               </label>
               <input
                 type="text"
-                id="userName"
-                name="userName"
-                value={formData.userName}
+                id="firstName"
+                name="firstName"
+                value={formData.firstName}
                 onChange={handleChange}
-                placeholder="Choose a username (optional)"
-                className={`form-input ${errors.userName ? 'error' : ''}`}
+                placeholder="Enter your first name"
+                className={`form-input ${errors.firstName ? 'error' : ''}`}
                 disabled={isLoading}
               />
-              {errors.userName && <span className="form-error">{errors.userName}</span>}
+              {errors.firstName && <span className="form-error">{errors.firstName}</span>}
+            </div>
+
+            {/* Middle Name Field */}
+            <div className="form-group">
+              <label htmlFor="middleName" className="form-label">
+                Middle Name
+              </label>
+              <input
+                type="text"
+                id="middleName"
+                name="middleName"
+                value={formData.middleName}
+                onChange={handleChange}
+                placeholder="Enter your middle name (optional)"
+                className={`form-input ${errors.middleName ? 'error' : ''}`}
+                disabled={isLoading}
+              />
+              {errors.middleName && <span className="form-error">{errors.middleName}</span>}
+            </div>
+
+            {/* Last Name Field */}
+            <div className="form-group">
+              <label htmlFor="lastName" className="form-label">
+                Last Name <span className="required">*</span>
+              </label>
+              <input
+                type="text"
+                id="lastName"
+                name="lastName"
+                value={formData.lastName}
+                onChange={handleChange}
+                placeholder="Enter your last name"
+                className={`form-input ${errors.lastName ? 'error' : ''}`}
+                disabled={isLoading}
+              />
+              {errors.lastName && <span className="form-error">{errors.lastName}</span>}
             </div>
 
             {/* Phone Field */}
             <div className="form-group">
               <label htmlFor="phoneNumber" className="form-label">
-                Phone Number
+                Phone Number <span className="required">*</span>
               </label>
               <input
                 type="tel"
@@ -149,11 +211,29 @@ const Register = () => {
                 name="phoneNumber"
                 value={formData.phoneNumber}
                 onChange={handleChange}
-                placeholder="Enter your phone number (optional)"
+                placeholder="Enter your phone number"
                 className={`form-input ${errors.phoneNumber ? 'error' : ''}`}
                 disabled={isLoading}
               />
               {errors.phoneNumber && <span className="form-error">{errors.phoneNumber}</span>}
+            </div>
+
+            {/* Referral Code Field */}
+            <div className="form-group">
+              <label htmlFor="referralCode" className="form-label">
+                Referral Code <span className="required">*</span>
+              </label>
+              <input
+                type="text"
+                id="referralCode"
+                name="referralCode"
+                value={formData.referralCode}
+                onChange={handleChange}
+                placeholder="Enter referral code"
+                className={`form-input ${errors.referralCode ? 'error' : ''}`}
+                disabled={isLoading}
+              />
+              {errors.referralCode && <span className="form-error">{errors.referralCode}</span>}
             </div>
 
             {/* Password Field */}
