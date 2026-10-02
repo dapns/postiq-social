@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { showErrorToast, showSuccessToast } from '@/utils/toast';
 import { Button } from '@/components/ui/button';
+import AuthLayout from '@/components/common/AuthLayout';
 import '../styles/Auth.css';
 
 const Register = () => {
@@ -13,7 +14,6 @@ const Register = () => {
     password: '',
     confirmPassword: '',
     firstName: '',
-    middleName: '',
     lastName: '',
     phoneNumber: '',
     referralCode: '',
@@ -49,10 +49,6 @@ const Register = () => {
       newErrors.firstName = 'First name is required';
     } else if (formData.firstName.length > 50) {
       newErrors.firstName = 'First name must be less than 50 characters';
-    }
-
-    if (formData.middleName.length > 50) {
-      newErrors.middleName = 'Middle name must be less than 50 characters';
     }
 
     if (!formData.lastName.trim()) {
@@ -104,7 +100,7 @@ const Register = () => {
         formData.email,
         formData.password,
         formData.firstName.trim(),
-        formData.middleName.trim(),
+        '',
         formData.lastName.trim(),
         formData.phoneNumber.trim(),
         formData.referralCode.trim()
@@ -120,14 +116,14 @@ const Register = () => {
   };
 
   return (
-      <div className="auth-container">
+      <AuthLayout>
         <div className="auth-card">
           <div className="auth-header">
             <h1 className="auth-title">Create Account</h1>
             <p className="auth-subtitle">Join PostIQ and start sharing</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="auth-form">
+          <form onSubmit={handleSubmit} className="auth-form auth-form--register">
             {/* Email Field */}
             <div className="form-group">
               <label htmlFor="email" className="form-label">
@@ -162,24 +158,6 @@ const Register = () => {
                 disabled={isLoading}
               />
               {errors.firstName && <span className="form-error">{errors.firstName}</span>}
-            </div>
-
-            {/* Middle Name Field */}
-            <div className="form-group">
-              <label htmlFor="middleName" className="form-label">
-                Middle Name
-              </label>
-              <input
-                type="text"
-                id="middleName"
-                name="middleName"
-                value={formData.middleName}
-                onChange={handleChange}
-                placeholder="Enter your middle name (optional)"
-                className={`form-input ${errors.middleName ? 'error' : ''}`}
-                disabled={isLoading}
-              />
-              {errors.middleName && <span className="form-error">{errors.middleName}</span>}
             </div>
 
             {/* Last Name Field */}
@@ -294,7 +272,7 @@ const Register = () => {
             </p>
           </div>
         </div>
-      </div>
+      </AuthLayout>
   );
 };
 

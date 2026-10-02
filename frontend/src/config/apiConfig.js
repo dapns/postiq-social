@@ -7,7 +7,7 @@ export const API_CONFIG = {
   // Change this to your backend API URL
   // e.g., 'http://localhost:5255' for local .NET backend
   // e.g., 'https://api.postiq.com' for production
-  API_BASE_URL: 'http://localhost:5013',
+  API_BASE_URL: 'https://localhost:7110/',
   
   // API Endpoints
   ENDPOINTS: {
@@ -33,6 +33,12 @@ export const API_CONFIG = {
     USER: {
       REGISTER: '/api/user/register',
     },
+    PROFILE: {
+      ME: '/api/Profile/me',
+      MY_POSTS: '/api/Profile/my-posts',
+      ADD_SOURCE: '/api/Profile',
+    },
+    HOME: '/api/Home',
   },
 };
 
@@ -40,5 +46,7 @@ export const API_CONFIG = {
  * Get full API URL
  */
 export const getApiUrl = (endpoint) => {
-  return `${API_CONFIG.API_BASE_URL}${endpoint}`;
+  const baseUrl = API_CONFIG.API_BASE_URL.replace(/\/+$/, '');
+  const path = endpoint.replace(/^\/+/, '');
+  return `${baseUrl}/${path}`;
 };

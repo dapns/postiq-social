@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { showErrorToast, showSuccessToast } from '@/utils/toast';
 import { Button } from '@/components/ui/button';
+import AuthLayout from '@/components/common/AuthLayout';
 import '../styles/Auth.css';
 
 const ResetPassword = () => {
@@ -10,10 +11,10 @@ const ResetPassword = () => {
   const [searchParams] = useSearchParams();
   const { resetPassword, isLoading } = useAuth();
 
-  const email = searchParams.get('email') || '';
   const token = searchParams.get('token') || '';
 
   const [formData, setFormData] = useState({
+    email: '',
     newPassword: '',
     confirmPassword: '',
   });
@@ -23,8 +24,10 @@ const ResetPassword = () => {
   const validateForm = () => {
     const newErrors = {};
 
-    if (!email) {
-      newErrors.email = 'Email parameter is missing. Please use the link from your email.';
+    if (!formData.email.trim()) {
+      newErrors.email = 'Email is required.';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
+      newErrors.email = 'Enter a valid email address.';
     }
 
     if (!token) {
@@ -71,7 +74,7 @@ const ResetPassword = () => {
     }
 
     try {
-      await resetPassword(email, token, formData.newPassword);
+      await resetPassword(formData.email.trim(), token, formData.newPassword);
       setSubmitted(true);
       showSuccessToast('Password reset successful! Redirecting to login...');
       setTimeout(() => {
@@ -85,7 +88,7 @@ const ResetPassword = () => {
 
   if (submitted) {
     return (
-        <div className="auth-container">
+        <AuthLayout>
           <div className="auth-card">
             <div className="auth-header">
               <h1 className="auth-title">Password Reset Complete</h1>
@@ -103,13 +106,13 @@ const ResetPassword = () => {
               Go to Sign In
             </Button>
           </div>
-        </div>
+        </AuthLayout>
     );
   }
 
-  if (!email || !token) {
+  if (!token) {
     return (
-        <div className="auth-container">
+        <AuthLayout>
           <div className="auth-card">
             <div className="auth-header">
               <h1 className="auth-title">Invalid Reset Link</h1>
@@ -127,7 +130,7 @@ const ResetPassword = () => {
               </Button>
             </Link>
 
-            <div className="auth-footer" style={{ marginTop: '1rem' }}>
+            <div className="auth-footer auth-footer--compact">
               <p>
                 <Link to="/login" className="auth-link signin-link">
                   Back to sign in
@@ -135,12 +138,12 @@ const ResetPassword = () => {
               </p>
             </div>
           </div>
-        </div>
+        </AuthLayout>
     );
   }
 
   return (
-      <div className="auth-container">
+      <AuthLayout>
         <div className="auth-card">
           <div className="auth-header">
             <h1 className="auth-title">Reset Password</h1>
@@ -148,6 +151,25 @@ const ResetPassword = () => {
           </div>
 
           <form onSubmit={handleSubmit} className="auth-form">
+            <div className="form-group">
+              <label htmlFor="email" className="form-label">
+                Email <span className="required">*</span>
+              </label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="you@example.com"
+                autoComplete="email"
+                className={`form-input ${errors.email ? 'error' : ''}`}
+                disabled={isLoading}
+                required
+              />
+              {errors.email && <span className="form-error">{errors.email}</span>}
+            </div>
+
             {/* New Password Field */}
             <div className="form-group">
               <label htmlFor="newPassword" className="form-label">
@@ -189,7 +211,6 @@ const ResetPassword = () => {
             </div>
 
             {/* Global Errors */}
-            {errors.email && <div className="form-error-message">{errors.email}</div>}
             {errors.token && <div className="form-error-message">{errors.token}</div>}
 
             {/* Submit Button */}
@@ -211,7 +232,7 @@ const ResetPassword = () => {
             </p>
           </div>
         </div>
-      </div>
+      </AuthLayout>
   );
 };
 

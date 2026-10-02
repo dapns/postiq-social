@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { showErrorToast, showSuccessToast } from '@/utils/toast';
 import { Button } from '@/components/ui/button';
+import AuthLayout from '@/components/common/AuthLayout';
 import '../styles/Auth.css';
 
 const ForgotPassword = () => {
@@ -50,7 +51,7 @@ const ForgotPassword = () => {
 
   if (submitted) {
     return (
-        <div className="auth-container">
+        <AuthLayout>
           <div className="auth-card">
             <div className="auth-header">
               <h1 className="auth-title">Check Your Email</h1>
@@ -62,7 +63,7 @@ const ForgotPassword = () => {
               <p>Click the link in the email to reset your password. If you don't see it, check your spam folder.</p>
             </div>
 
-            <div className="auth-links" style={{ textAlign: 'center', marginTop: '2rem' }}>
+            <div className="auth-links auth-links--center">
               <Button
                 onClick={() => setSubmitted(false)}
                 className="btn-secondary"
@@ -71,7 +72,7 @@ const ForgotPassword = () => {
               </Button>
             </div>
 
-            <div className="auth-footer" style={{ marginTop: '2rem' }}>
+            <div className="auth-footer">
               <p>
                 Remember your password?{' '}
                 <Link to="/login" className="auth-link signin-link">
@@ -80,12 +81,12 @@ const ForgotPassword = () => {
               </p>
             </div>
           </div>
-        </div>
+        </AuthLayout>
     );
   }
 
   return (
-      <div className="auth-container">
+      <AuthLayout>
         <div className="auth-card">
           <div className="auth-header">
             <h1 className="auth-title">Forgot Password</h1>
@@ -129,7 +130,7 @@ const ForgotPassword = () => {
             </p>
           </div>
         </div>
-      </div>
+      </AuthLayout>
   );
 };
 

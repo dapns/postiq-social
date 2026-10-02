@@ -22,12 +22,13 @@ import {
   resetPasswordFailure,
   setUser,
   clearError,
+  authInitializationComplete,
 } from '@/store/slices/authSlice';
 import AuthService from '@/services/authService';
 
 export const useAuth = () => {
   const dispatch = useDispatch();
-  const { user, accessToken, refreshToken, isLoading, error, isAuthenticated } = useSelector(
+  const { user, accessToken, refreshToken, isLoading, error, isAuthenticated, isAuthInitialized } = useSelector(
     (state) => state.auth
   );
 
@@ -145,6 +146,7 @@ export const useAuth = () => {
     isLoading,
     error,
     isAuthenticated,
+    isAuthInitialized,
     register,
     login,
     logout,
@@ -155,23 +157,33 @@ export const useAuth = () => {
     clearError: handleClearError,
   };
 };
-export const initializeAuth = async (dispatch) => {
-  // Refresh tokens on app start using stored refreshToken in sessionStorage
-  try {
-    const refreshToken = sessionStorage.getItem('refreshToken');
-    if (!refreshToken) return;
-    const response = await AuthService.refreshToken(refreshToken);
-    dispatch(loginSuccess(response));
-    try { 
-      if (response.refreshToken) sessionStorage.setItem('refreshToken', response.refreshToken);
-    } catch {}
-    try {
-      const profile = await AuthService.getProfile();
-      dispatch(setUser(profile));
-    } catch (profileErr) {
-      console.warn('Failed to fetch profile during init', profileErr);
-    }
-  } catch (err) {
-    // ignore; no valid session
+let authInitializationPromise;
+
+export const initializeAuth = (dispatch) => {
+  if (!authInitializationPromise) {
+    authInitializationPromise = (async () => {
+      try {
+        const refreshToken = sessionStorage.getItem('refreshToken');
+        if (!refreshToken) return;
+
+        const response = await AuthService.refreshToken(refreshToken);
+        dispatch(loginSuccess(response));
+        try {
+          if (response.refreshToken) sessionStorage.setItem('refreshToken', response.refreshToken);
+        } catch {}
+        try {
+          const profile = await AuthService.getProfile();
+          dispatch(setUser(profile));
+        } catch (profileErr) {
+          console.warn('Failed to fetch profile during init', profileErr);
+        }
+      } catch {
+        try { sessionStorage.removeItem('refreshToken'); } catch {}
+      } finally {
+        dispatch(authInitializationComplete());
+      }
+    })();
   }
+
+  return authInitializationPromise;
 };

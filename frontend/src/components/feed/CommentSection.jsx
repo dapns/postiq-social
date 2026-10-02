@@ -1,17 +1,21 @@
 import React, { useState } from 'react';
 import '../../styles/CommentSection.css';
 import { Heart } from 'lucide-react';
+import getInitials from '@/utils/getInitials';
 
 const CommentSection = ({
   comments = [],
   onAddComment,
   onLikeComment,
   onReplyComment,
+  isAuthenticated = false,
 }) => {
   const [displayCount, setDisplayCount] = useState(2);
   const [likedComments, setLikedComments] = useState(new Set());
   const [replyingTo, setReplyingTo] = useState(null);
   const [replyText, setReplyText] = useState('');
+  const [pendingCommentId, setPendingCommentId] = useState(null);
+  const [actionError, setActionError] = useState('');
 
   const displayedComments = comments.slice(0, displayCount);
   const hasMoreComments = displayCount < comments.length;
@@ -20,26 +24,42 @@ const CommentSection = ({
     setDisplayCount((prev) => prev + 5);
   };
 
-  const handleLikeComment = (commentId) => {
+  const handleLikeComment = async (commentId) => {
+    if (!isAuthenticated || pendingCommentId !== null) return;
+    const wasLiked = likedComments.has(commentId);
     const newLiked = new Set(likedComments);
-    if (newLiked.has(commentId)) {
+    if (wasLiked) {
       newLiked.delete(commentId);
     } else {
       newLiked.add(commentId);
     }
     setLikedComments(newLiked);
-    if (onLikeComment) {
-      onLikeComment(commentId);
+    setPendingCommentId(commentId);
+    setActionError('');
+    try {
+      await onLikeComment?.(commentId);
+    } catch (requestError) {
+      setLikedComments(likedComments);
+      setActionError(requestError.message || 'Could not update the comment like.');
+    } finally {
+      setPendingCommentId(null);
     }
   };
 
-  const handleReplySubmit = (commentId) => {
-    if (replyText.trim()) {
-      if (onReplyComment) {
-        onReplyComment(commentId, replyText);
-      }
+  const handleReplySubmit = async (commentId) => {
+    const content = replyText.trim();
+    if (!isAuthenticated || !content || pendingCommentId !== null) return;
+
+    setPendingCommentId(commentId);
+    setActionError('');
+    try {
+      await onReplyComment?.(commentId, content);
       setReplyText('');
       setReplyingTo(null);
+    } catch (requestError) {
+      setActionError(requestError.message || 'Could not post your reply.');
+    } finally {
+      setPendingCommentId(null);
     }
   };
 
@@ -65,14 +85,21 @@ const CommentSection = ({
 
   return (
     <div className="comment-section-wrapper">
+      {actionError && <p className="comment-action-error" role="alert">{actionError}</p>}
       <div className="comments-list">
         {displayedComments.map((comment) => (
           <div key={comment.id} className="comment-item">
-            <img
-              src={comment.author?.avatar || 'https://i.pravatar.cc/32?img=default'}
-              alt={comment.author?.name}
-              className="comment-avatar"
-            />
+            {comment.author?.avatar ? (
+              <img
+                src={comment.author.avatar}
+                alt={comment.author.name || 'Comment author'}
+                className="comment-avatar"
+              />
+            ) : (
+              <span className="comment-avatar comment-avatar--initials" aria-hidden="true">
+                {getInitials(comment.author?.name)}
+              </span>
+            )}
             <div className="comment-content">
               <div className="comment-header">
                 <span className="comment-author">{comment.author?.name}</span>
@@ -82,12 +109,16 @@ const CommentSection = ({
               <div className="comment-actions">
                 <button
                   className="comment-action-btn"
+                  disabled={!isAuthenticated}
+                  title={isAuthenticated ? 'Reply' : 'Log in to reply'}
                   onClick={() => setReplyingTo(replyingTo === comment.id ? null : comment.id)}
                 >
                   Reply
                 </button>
                 <button
                   className={`comment-action-btn like-comment ${likedComments.has(comment.id) ? 'liked' : ''}`}
+                  disabled={!isAuthenticated || pendingCommentId !== null}
+                  title={isAuthenticated ? 'Like comment' : 'Log in to like'}
                   onClick={() => handleLikeComment(comment.id)}
                 >
                   {likedComments.has(comment.id) ? (
@@ -100,7 +131,7 @@ const CommentSection = ({
               </div>
 
               {/* Reply Box */}
-              {replyingTo === comment.id && (
+              {isAuthenticated && replyingTo === comment.id && (
                 <div className="reply-box">
                   <input
                     type="text"
@@ -118,7 +149,7 @@ const CommentSection = ({
                     <button
                       className="reply-submit"
                       onClick={() => handleReplySubmit(comment.id)}
-                      disabled={!replyText.trim()}
+                      disabled={!replyText.trim() || pendingCommentId !== null}
                     >
                       Reply
                     </button>

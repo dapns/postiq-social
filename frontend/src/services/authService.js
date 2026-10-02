@@ -5,6 +5,7 @@
 
 import { API_CONFIG, getApiUrl } from '@/config/apiConfig';
 import httpClient from '@/lib/httpClient';
+import { apiFetch } from '@/lib/apiLoading';
 
 class AuthService {
   /**
@@ -12,7 +13,7 @@ class AuthService {
    */
   static async register(data) {
     try {
-      const response = await fetch(getApiUrl(API_CONFIG.ENDPOINTS.USER.REGISTER), {
+      const response = await apiFetch(getApiUrl(API_CONFIG.ENDPOINTS.USER.REGISTER), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -39,7 +40,7 @@ class AuthService {
    */
   static async login(email, password) {
     try {
-      const response = await fetch(getApiUrl(API_CONFIG.ENDPOINTS.AUTH.LOGIN), {
+      const response = await apiFetch(getApiUrl(API_CONFIG.ENDPOINTS.AUTH.LOGIN), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -68,7 +69,7 @@ class AuthService {
     if (!refreshToken) throw new Error('Refresh token required');
 
     try {
-      const response = await fetch(getApiUrl(API_CONFIG.ENDPOINTS.AUTH.REFRESH), {
+      const response = await apiFetch(getApiUrl(API_CONFIG.ENDPOINTS.AUTH.REFRESH), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -91,7 +92,7 @@ class AuthService {
    */
   static async logout(refreshToken) {
     try {
-      const response = await fetch(getApiUrl(API_CONFIG.ENDPOINTS.AUTH.LOGOUT), {
+      const response = await apiFetch(getApiUrl(API_CONFIG.ENDPOINTS.AUTH.LOGOUT), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -136,7 +137,7 @@ class AuthService {
    */
   static async forgotPassword(email) {
     try {
-      const response = await fetch(getApiUrl(API_CONFIG.ENDPOINTS.AUTH.FORGOT_PASSWORD), {
+      const response = await apiFetch(getApiUrl(API_CONFIG.ENDPOINTS.AUTH.FORGOT_PASSWORD), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -163,7 +164,7 @@ class AuthService {
    */
   static async resetPassword(email, token, newPassword) {
     try {
-      const response = await fetch(getApiUrl(API_CONFIG.ENDPOINTS.AUTH.RESET_PASSWORD), {
+      const response = await apiFetch(getApiUrl(API_CONFIG.ENDPOINTS.AUTH.RESET_PASSWORD), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -190,7 +191,7 @@ class AuthService {
    */
   static async confirmEmail(email, token) {
     try {
-      const response = await fetch(getApiUrl(API_CONFIG.ENDPOINTS.AUTH.CONFIRM_EMAIL), {
+      const response = await apiFetch(getApiUrl(API_CONFIG.ENDPOINTS.AUTH.CONFIRM_EMAIL), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -213,7 +214,7 @@ class AuthService {
    */
   static async resendConfirmation(email) {
     try {
-      const response = await fetch(getApiUrl(API_CONFIG.ENDPOINTS.AUTH.RESEND_CONFIRMATION), {
+      const response = await apiFetch(getApiUrl(API_CONFIG.ENDPOINTS.AUTH.RESEND_CONFIRMATION), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

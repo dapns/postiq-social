@@ -1,168 +1,167 @@
-import React, { useState } from 'react';
-import { Button } from "@/components/ui/button";
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import PostFeed from "@/components/feed/PostFeed";
-import UploadPanel from "@/components/feed/UploadPanel";
+import { API_CONFIG } from '@/config/apiConfig';
+import httpClient from '@/lib/httpClient';
+import { useAuth } from '@/hooks/useAuth';
+import getInitials from '@/utils/getInitials';
+
+const PAGE_SIZE = 5;
 
 const Home = () => {
-    const initialPosts = [
-        {
-            id: 1,
-            author: {
-                name: 'Briansky',
-                avatar: 'https://i.pravatar.cc/48?img=1',
-            },
-            timestamp: new Date(Date.now() - 3600000),
-            content: {
-                text: 'Beautiful art ✨',
-                image: 'https://media.istockphoto.com/photos/blog-picture-id479759238?k=6&m=479759238&s=612x612&w=0&h=cIOO2FfZ9YKhVrXLAiBnu9r7Z9kWOa9uqPcBS5Pdebo=',
-                hashtags: '#art #aesthetics #artist #artphotography #photography',
-            },
-            likes: 320,
-            comments: 128,
-            shares: 148,
-            commentsList: [
-                {
-                    id: 'c1',
-                    author: { name: 'John Doe', avatar: 'https://i.pravatar.cc/32?img=10' },
-                    text: 'Wow, this is amazing artwork!',
-                    timestamp: new Date(Date.now() - 1800000),
-                    likes: 5,
-                },
-                {
-                    id: 'c2',
-                    author: { name: 'Emma Wilson', avatar: 'https://i.pravatar.cc/32?img=11' },
-                    text: 'Love the color palette 🎨',
-                    timestamp: new Date(Date.now() - 900000),
-                    likes: 12,
-                },
-                {
-                    id: 'c3',
-                    author: { name: 'Alex Smith', avatar: 'https://i.pravatar.cc/32?img=12' },
-                    text: 'Where can I see more of your work?',
-                    timestamp: new Date(Date.now() - 600000),
-                    likes: 3,
-                },
-                {
-                    id: 'c4',
-                    author: { name: 'Lisa Chen', avatar: 'https://i.pravatar.cc/32?img=13' },
-                    text: 'Absolutely stunning! 🌟',
-                    timestamp: new Date(Date.now() - 300000),
-                    likes: 8,
-                },
-                {
-                    id: 'c5',
-                    author: { name: 'Mike Brown', avatar: 'https://i.pravatar.cc/32?img=14' },
-                    text: 'This should be in a gallery',
-                    timestamp: new Date(Date.now() - 180000),
-                    likes: 6,
-                },
-                {
-                    id: 'c6',
-                    author: { name: 'Sara Johnson', avatar: 'https://i.pravatar.cc/32?img=15' },
-                    text: 'The composition is perfect',
-                    timestamp: new Date(Date.now() - 60000),
-                    likes: 4,
-                },
-                {
-                    id: 'c7',
-                    author: { name: 'Tom Davis', avatar: 'https://i.pravatar.cc/32?img=16' },
-                    text: 'One of the best pieces I\'ve seen',
-                    timestamp: new Date(Date.now() - 30000),
-                    likes: 11,
-                },
-            ],
-        },
-        {
-            id: 2,
-            author: {
-                name: 'Sarah Smith',
-                avatar: 'https://i.pravatar.cc/48?img=2',
-            },
-            timestamp: new Date(Date.now() - 7200000),
-            content: {
-                text: 'Exploring new technologies in web development',
-                summary: 'This post discusses the latest trends in web development including React hooks, TypeScript, and Tailwind CSS adoption in enterprise applications.',
-            },
-            likes: 156,
-            comments: 24,
-            shares: 8,
-            commentsList: [
-                {
-                    id: 'c8',
-                    author: { name: 'Code Master', avatar: 'https://i.pravatar.cc/32?img=20' },
-                    text: 'Great insights! React 19 is amazing',
-                    timestamp: new Date(Date.now() - 3600000),
-                    likes: 7,
-                },
-                {
-                    id: 'c9',
-                    author: { name: 'Dev Guru', avatar: 'https://i.pravatar.cc/32?img=21' },
-                    text: 'TypeScript is a game changer',
-                    timestamp: new Date(Date.now() - 1800000),
-                    likes: 9,
-                },
-            ],
-        },
-        {
-            id: 3,
-            author: {
-                name: 'Mike Johnson',
-                avatar: 'https://i.pravatar.cc/48?img=3',
-            },
-            timestamp: new Date(Date.now() - 86400000),
-            content: {
-                text: 'Happy to announce that our team won the hackathon! Thank you all for the support and collaboration.',
-                image: 'https://www.searchenginejournal.com/wp-content/uploads/2020/08/7-ways-a-blog-can-help-your-business-right-now-5f3c06b9eb24e-1280x720.png',
-            },
-            likes: 512,
-            comments: 67,
-            shares: 89,
-            commentsList: [
-                {
-                    id: 'c10',
-                    author: { name: 'Congratulator', avatar: 'https://i.pravatar.cc/32?img=30' },
-                    text: 'Congratulations! 🎉',
-                    timestamp: new Date(Date.now() - 82800000),
-                    likes: 15,
-                },
-                {
-                    id: 'c11',
-                    author: { name: 'Team Lead', avatar: 'https://i.pravatar.cc/32?img=31' },
-                    text: 'Proud of your achievement!',
-                    timestamp: new Date(Date.now() - 79200000),
-                    likes: 10,
-                },
-            ],
-        },
-    ];
+    const { isAuthenticated, isAuthInitialized, user } = useAuth();
+    const [pages, setPages] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [isLoadingMore, setIsLoadingMore] = useState(false);
+    const [hasMore, setHasMore] = useState(false);
+    const [error, setError] = useState('');
+    const [loadMoreError, setLoadMoreError] = useState('');
+    const bottomSentinelRef = useRef(null);
+    const pagesRef = useRef(pages);
+    const nextPageRef = useRef(1);
+    const loadingPagesRef = useRef(new Set());
+    const isMountedRef = useRef(false);
+    pagesRef.current = pages;
 
-    const [posts, setPosts] = useState(initialPosts);
+    const loadPosts = useCallback(async (page, direction = 'next') => {
+        if (loadingPagesRef.current.has(page) || pagesRef.current.some((group) => group.page === page)) return;
+        loadingPagesRef.current.add(page);
 
-    // current user (used to show avatar in comment box)
+        if (direction === 'initial') {
+            setIsLoading(true);
+            setError('');
+        } else {
+            setIsLoadingMore(true);
+            setLoadMoreError('');
+        }
+
+        try {
+            const response = await httpClient.request(
+                `${API_CONFIG.ENDPOINTS.HOME}?pageNo=${page}&pageSize=${PAGE_SIZE}`,
+                { method: 'GET' }
+            );
+            if (!isMountedRef.current) return;
+
+            const apiPosts = Array.isArray(response?.data) ? response.data : [];
+            const mappedPosts = apiPosts.map((post) => {
+                const body = post.autoGeneratedPostByAi || post.autoGeneratedPost || '';
+                const articleBody = post.title && body.trimStart().startsWith(post.title)
+                    ? body.trimStart().slice(post.title.length).trimStart()
+                    : body;
+                return {
+                    id: post.id,
+                    author: { name: post.author || 'Anonymous' },
+                    timestamp: post.postedOn,
+                    content: {
+                        title: post.title,
+                        html: articleBody,
+                    },
+                    likes: post.likeCount || 0,
+                    comments: post.commentCount || 0,
+                    shares: 0,
+                    commentsList: null,
+                    isLiked: Boolean(post.isLiked),
+                };
+            });
+
+            setPages((currentPages) => currentPages.some((group) => group.page === page)
+                ? currentPages
+                : [...currentPages, { page, posts: mappedPosts }]);
+
+            if (page === nextPageRef.current) {
+                nextPageRef.current = page + 1;
+                setHasMore(Boolean(response?.hasNext));
+            }
+        } catch (requestError) {
+            if (isMountedRef.current) {
+                const message = requestError.message || 'Unable to load posts.';
+                if (direction === 'initial') setError(message);
+                else setLoadMoreError(message);
+            }
+        } finally {
+            loadingPagesRef.current.delete(page);
+            if (isMountedRef.current) {
+                if (direction === 'initial') setIsLoading(false);
+                else setIsLoadingMore(false);
+            }
+        }
+    }, []);
+
+    const currentUserName = isAuthenticated ? user?.userName || user?.email || '' : '';
     const currentUser = {
-        name: 'You',
-        avatar: 'https://i.pravatar.cc/40?img=5',
+        name: currentUserName,
+        initials: getInitials(currentUserName),
     };
 
-    return (
-        <div className="min-h-screen bg-gray-50">
-            <div className="max-w-3xl mx-auto px-4">
-                <UploadPanel
-                    onUpload={(file) => console.log('Uploaded file:', file.name)}
-                    onGeneratePost={(generated) => {
-                        // prepend generated post
-                        setPosts((p) => [{ id: Date.now(), ...generated }, ...p]);
-                    }}
-                />
+    const loadNextPage = useCallback(() => loadPosts(nextPageRef.current), [loadPosts]);
 
-                <PostFeed
-                    posts={posts}
-                    currentUser={currentUser}
-                    onLike={(postId) => console.log(`Liked post ${postId}`)}
-                    onComment={(postId, text) => console.log(`Commented on post ${postId}:`, text)}
-                    onShare={(postId) => console.log(`Shared post ${postId}`)}
-                    onAddOption={(postId) => console.log(`Options clicked for post ${postId}`)}
-                />
+    useEffect(() => {
+        if (!isAuthInitialized) return undefined;
+        isMountedRef.current = true;
+        loadPosts(1, 'initial');
+        return () => {
+            isMountedRef.current = false;
+        };
+    }, [isAuthInitialized, loadPosts]);
+
+    useEffect(() => {
+        const sentinel = bottomSentinelRef.current;
+        if (!sentinel || !hasMore || isLoading || isLoadingMore || error || loadMoreError) return;
+        if (typeof IntersectionObserver === 'undefined') return;
+
+        const observer = new IntersectionObserver(([entry]) => {
+            if (entry.isIntersecting) loadNextPage();
+        }, { rootMargin: '400px 0px' });
+
+        observer.observe(sentinel);
+        return () => observer.disconnect();
+    }, [error, hasMore, isLoading, isLoadingMore, loadMoreError, loadNextPage]);
+
+    return (
+        <div className="home-page">
+            <div className="w-full max-w-3xl mx-auto px-0 sm:px-2">
+                {isLoading ? (
+                    <p role="status" className="py-6 text-center text-gray-500">Loading posts...</p>
+                ) : error ? (
+                    <div className="py-6 text-center">
+                        <p role="alert" className="text-red-600">{error}</p>
+                        <button className="mt-3 text-sm font-semibold text-emerald-800 underline" onClick={() => loadPosts(1, 'initial')}>
+                            Try again
+                        </button>
+                    </div>
+                ) : (
+                    <>
+                        <PostFeed
+                            pages={pages}
+                            currentUser={currentUser}
+                            onShare={(postId) => console.log(`Shared post ${postId}`)}
+                            onAddOption={(postId) => console.log(`Options clicked for post ${postId}`)}
+                        />
+                        {loadMoreError && (
+                            <div className="py-4 text-center">
+                                <p role="alert" className="text-sm text-red-600">{loadMoreError}</p>
+                                <button className="mt-2 text-sm font-semibold text-emerald-800 underline" onClick={loadNextPage}>
+                                    Try again
+                                </button>
+                            </div>
+                        )}
+                        {isLoadingMore && (
+                            <p role="status" className="py-4 text-center text-sm text-gray-500">Loading more posts...</p>
+                        )}
+                        {hasMore && <div ref={bottomSentinelRef} className="h-px" aria-hidden="true" />}
+                        {hasMore && !loadMoreError && (
+                            <div className="py-4 text-center">
+                                <button
+                                    type="button"
+                                    className="rounded-md border border-emerald-800 px-4 py-2 text-sm font-semibold text-emerald-800 disabled:cursor-wait disabled:opacity-60"
+                                    onClick={loadNextPage}
+                                    disabled={isLoadingMore}
+                                >
+                                    {isLoadingMore ? 'Loading posts...' : 'Load more posts'}
+                                </button>
+                            </div>
+                        )}
+                    </>
+                )}
             </div>
         </div>
     );

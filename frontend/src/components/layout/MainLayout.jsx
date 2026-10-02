@@ -3,12 +3,12 @@ import Navbar from "./Navbar";
 
 const MainLayout = () => {
     return (
-        <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-zinc-950">
+        <div className="app-shell flex min-h-screen flex-col">
             <Navbar />
-            <main className="flex-1 container mx-auto px-4 py-8">
+            <main className="app-main container mx-auto w-full flex-1 px-3 py-4 sm:px-4 sm:py-8">
                 <Outlet />
             </main>
-            <footer className="border-t py-6 text-center text-sm text-slate-500">
+            <footer className="app-footer px-3 py-5 text-center text-xs sm:px-4 sm:py-6 sm:text-sm">
                 © {new Date().getFullYear()} PostIQ Social. Built with React & Shadcn UI.
             </footer>
         </div>

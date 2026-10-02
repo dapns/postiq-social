@@ -1,5 +1,6 @@
 import React, { useCallback, useRef, useState } from "react";
 import "../../styles/UploadPanel.css";
+import getInitials from '@/utils/getInitials';
 import {
   Image,
   Video,
@@ -20,7 +21,7 @@ The future of web development is here - it's faster, smarter, and more efficient
 
 #WebDevelopment #React #TechTrends #Innovation`;
 
-const UploadPanel = ({ onUpload, onGeneratePost }) => {
+const UploadPanel = ({ onUpload, onGeneratePost, currentUser }) => {
   const [file, setFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [generating, setGenerating] = useState(false);
@@ -72,7 +73,7 @@ const UploadPanel = ({ onUpload, onGeneratePost }) => {
     try {
       await new Promise((r) => setTimeout(r, 900));
       const generated = {
-        author: { name: "You", avatar: "https://i.pravatar.cc/40?img=5" },
+        author: { name: currentUser?.name || "You" },
         timestamp: new Date(),
         content: {
           text: demoText,
@@ -102,7 +103,7 @@ const UploadPanel = ({ onUpload, onGeneratePost }) => {
     try {
       await new Promise((r) => setTimeout(r, 900));
       const generated = {
-        author: { name: "You", avatar: "https://i.pravatar.cc/40?img=5" },
+        author: { name: currentUser?.name || "You" },
         timestamp: new Date(),
         content: {
           text: text || "",
@@ -132,7 +133,9 @@ const UploadPanel = ({ onUpload, onGeneratePost }) => {
       onDragOver={handleDragOver}
     >
       <div className="share-row">
-        <img className="u-avatar" src="https://i.pravatar.cc/40" alt="you" />
+        <span className={`u-avatar${currentUser?.initials ? ' u-avatar--initials' : ''}`} aria-hidden="true">
+          {currentUser?.initials || ''}
+        </span>
         <div className="prompt-box">
           <div className="attachments">
             <button

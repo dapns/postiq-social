@@ -12,6 +12,7 @@ const initialState = {
   isLoading: false,
   error: null,
   isAuthenticated: false,
+  isAuthInitialized: false,
 };
 
 const authSlice = createSlice({
@@ -113,6 +114,9 @@ const authSlice = createSlice({
       state.accessToken = accessToken;
       state.refreshToken = refreshToken;
     },
+    authInitializationComplete: (state) => {
+      state.isAuthInitialized = true;
+    },
   },
 });
 
@@ -135,6 +139,7 @@ export const {
   resetPasswordFailure,
   clearError,
   refreshTokenSuccess,
+  authInitializationComplete,
 } = authSlice.actions;
 
 export default authSlice.reducer;

@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { showErrorToast, showSuccessToast } from '@/utils/toast';
 import { Button } from '@/components/ui/button';
+import AuthLayout from '@/components/common/AuthLayout';
 import '../styles/Auth.css';
 
 const Login = () => {
@@ -68,7 +69,7 @@ const Login = () => {
   };
 
   return (
-      <div className="auth-container">
+      <AuthLayout>
         <div className="auth-card">
           <div className="auth-header">
             <h1 className="auth-title">Welcome Back</h1>
@@ -142,7 +143,7 @@ const Login = () => {
             </p>
           </div>
         </div>
-      </div>
+      </AuthLayout>
   );
 };
 

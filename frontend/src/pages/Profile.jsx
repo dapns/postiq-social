@@ -1,48 +1,61 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import "../styles/Profile.css";
-import profileImg from "../assets/profile.jpg";
-import mediumLogo from "../assets/medium-logo.png";
+import { addProfileSource, fetchProfile } from '@/store/slices/profileSlice';
+import { ArrowUpRight, ExternalLink, Hash, Link2, Mail } from 'lucide-react';
+import getInitials from '@/utils/getInitials';
+
+const getSafeUrl = (value) => {
+  try {
+    const url = new URL(value);
+    return ['http:', 'https:'].includes(url.protocol) ? url.href : null;
+  } catch {
+    return null;
+  }
+};
 
 export default function ProfileCard() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const {
+    data: profileData,
+    isLoading: isProfileLoading,
+    error: profileError,
+    isAddingSource,
+    addSourceError,
+    addSourceSuccess,
+  } = useSelector((state) => state.profile);
 
-  // ---------- State for interests ----------
-  const [interests, setInterests] = useState([".NET", "JAVA", "Angular", "ReactJS", "NodeJS", "Python", "Django", "Machine Learning", "Data Science", "DevOps", "Cloud Computing", "Cybersecurity", "Blockchain", "AI", "Web Development"]);
-  const [newInterest, setNewInterest] = useState("");
+  useEffect(() => {
+    dispatch(fetchProfile());
+  }, [dispatch]);
+
+  const profileName = [profileData?.firstName, profileData?.lastName]
+    .filter(Boolean)
+    .join(' ') || 'Your profile';
+  const profileInitials = getInitials(profileName) || 'P';
+  const jobs = Array.isArray(profileData?.posts?.data) ? profileData.posts.data : [];
 
   // ---------- State for social profiles ----------
   const [selectedPlatform, setSelectedPlatform] = useState("Medium");
   const [mediumUrl, setMediumUrl] = useState("");
-  const [savedMediumUrl, setSavedMediumUrl] = useState("");
 
-  const handleAddInterest = () => {
-    const trimmed = newInterest.trim();
-    //trimmed="*"+trimmed;
-    if (!trimmed) return;
-    // avoid duplicates (optional)
-    if (!interests.includes(trimmed)) {
-      setInterests([...interests, trimmed]);
-    }
-    setNewInterest("");
-  };
-
-  const handleKeyDown = (e) => {
-    if (e.key === "Enter") {
-      handleAddInterest();
-    }
-  };
-
-  const handleSubmitSocialUrl = (e) => {
+  const handleSubmitSocialUrl = async (e) => {
     e.preventDefault();
-    const trimmed = mediumUrl.trim();
-    if (!trimmed) {
-      alert("Please enter a valid URL");
+    const baseUrl = getSafeUrl(mediumUrl.trim());
+    if (!baseUrl) {
+      alert('Please enter a valid HTTP or HTTPS URL.');
       return;
     }
-    console.log(`${selectedPlatform} URL submitted:`, trimmed);
-    setSavedMediumUrl(trimmed);
-    setMediumUrl("");
+
+    try {
+      await dispatch(addProfileSource({ source: selectedPlatform, baseUrl })).unwrap();
+      setMediumUrl('');
+      await dispatch(fetchProfile()).unwrap();
+    } catch {
+      // The request error is displayed from the profile slice.
+    }
   };
 
   return (
@@ -50,24 +63,92 @@ export default function ProfileCard() {
       <div className="profile">
         {/* Header */}
         <div className="profile-image">
-          <img
-            src={profileImg}
-            alt="Profile"
-            className="w-20 sm:w-24 h-20 sm:h-24 rounded-full border border-green-400 avatar-img flex-shrink-0"
-          />
-          <div className="name">
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-1">
-              Ashutosh Kumar Shaw
-            </h1>
-            <p className="Designation">Specialist Programmer</p>
+          <div className="profile-identity">
+            <button
+              type="button"
+              className="profile-identity-trigger"
+              onClick={() => navigate('/myposts')}
+              aria-label={`View posts by ${profileName}`}
+              title="View my posts"
+            >
+              <span className="profile-avatar-frame">
+                <span className="profile-avatar-initials" aria-hidden="true">{profileInitials}</span>
+              </span>
+              <span className="profile-identity-copy">
+                <span className="profile-identity-kicker">YOUR PROFILE</span>
+                <span className="profile-name-row">
+                  <span className="profile-name">{profileName}</span>
+                  <ArrowUpRight className="profile-name-arrow" size={19} aria-hidden="true" />
+                </span>
+              </span>
+            </button>
+            <div className="profile-identity-details" aria-label="Profile details">
+              <span className="profile-identity-detail">
+                <Mail size={15} aria-hidden="true" />
+                {profileData?.email || 'PostIQ member'}
+              </span>
+              {profileData?.referralCode && (
+                <span className="profile-identity-detail profile-identity-detail--code">
+                  <Hash size={15} aria-hidden="true" />
+                  Referral code <strong>{profileData.referralCode}</strong>
+                </span>
+              )}
+            </div>
           </div>
         </div>
 
-        {/* My Posts */}
-        <div className="px-6 py-4 font-semibold text-gray-700 border-r border-green-300 flex items-center gap-3 badge bg-gradient-to-r from-green-50 to-transparent hover:bg-green-100">
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-800">My Posts</h2>
-          <button onClick={() => navigate('/myposts')} className="text-l sm:text-2l font-light text-gray-70 add-post-btn hover:scale-10">+</button>
-        </div>
+        {isProfileLoading && <p role="status" className="profile-data-message">Loading profile data...</p>}
+        {profileError && <p role="alert" className="profile-data-message profile-data-message--error">{profileError}</p>}
+
+        {/* Sources from ProfileController */}
+        <section className="profile-sources" aria-labelledby="profile-sources-title">
+          <div className="profile-sources__header">
+            <div>
+              <p className="profile-sources__eyebrow">Your network</p>
+              <h2 id="profile-sources-title">Connected Sources</h2>
+            </div>
+            <span className="profile-sources__count">
+              {jobs.length} {jobs.length === 1 ? 'source' : 'sources'}
+            </span>
+          </div>
+          {!isProfileLoading && !profileError && jobs.length === 0 && (
+            <div className="profile-sources__empty">
+              <span className="profile-sources__empty-icon" aria-hidden="true"><Link2 size={19} /></span>
+              <div>
+                <strong>No connected sources</strong>
+                <p>Your connected publishers will appear here.</p>
+              </div>
+            </div>
+          )}
+          {jobs.length > 0 && (
+            <ul className="profile-source-list">
+              {jobs.map((job, index) => {
+                const safeUrl = getSafeUrl(job.baseUrl);
+                return (
+                  <li className="profile-source-item" key={`${job.source}-${job.baseUrl}-${index}`}>
+                    <span className="profile-source-item__icon" aria-hidden="true"><Link2 size={17} /></span>
+                    <div className="profile-source-item__details">
+                      <strong>{job.source || 'Source'}</strong>
+                      <span className="profile-source-item__url" title={job.baseUrl}>{job.baseUrl}</span>
+                    </div>
+                    {safeUrl && (
+                      <a
+                        className="profile-source-item__open"
+                        href={safeUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={`Open ${job.source || 'source'} in a new tab`}
+                        title="Open source"
+                      >
+                        <ExternalLink size={16} aria-hidden="true" />
+                      </a>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </section>
 
         {/* Social Profiles Section */}
         <div className="px-6 py-4">
@@ -101,79 +182,24 @@ export default function ProfileCard() {
                 onChange={(e) => setMediumUrl(e.target.value)}
                 placeholder={`https://medium.com/@your-profile`}
                 className="w-full border border-green-400 rounded-lg px-4 py-3 sm:py-2 outline-none text-base focus:ring-2 focus:ring-green-300"
+                disabled={isAddingSource}
               />
             </div>
 
             {/* Submit Button */}
             <button
               type="submit"
+              disabled={isAddingSource || !mediumUrl.trim()}
               className="px-6 py-3 sm:py-2 rounded-lg border border-green-400 font-semibold text-base bg-green-50 hover:bg-green-100 transition-colors"
             >
-              Add Social Profile
+              {isAddingSource ? 'Adding...' : 'Add Social Profile'}
             </button>
           </form>
+          {addSourceError && <p role="alert" className="profile-data-message profile-data-message--error">{addSourceError}</p>}
+          {addSourceSuccess && <p role="status" className="profile-data-message">Source connected.</p>}
 
-          {/* Display Saved Medium Profile */}
-          {savedMediumUrl && (
-            <div className="mt-6 pt-6 border-t border-green-300">
-              <h3 className="text-lg font-semibold text-gray-800 mb-3">Your Profiles</h3>
-              <a
-                href={savedMediumUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center border border-green-300 rounded-xl overflow-hidden post-link hover:shadow-md transition-all bg-white"
-              >
-                <div className="px-6 py-4 font-semibold text-gray-700 border-r border-green-300 flex items-center gap-3 badge bg-gradient-to-r from-green-50 to-transparent hover:bg-green-100">
-                  <img src={mediumLogo} alt="Medium" className="w-7 h-7 icon" />
-                  <div className="flex flex-col">
-                    <span className="text-lg">Medium</span>
-                    <span className="text-xs text-gray-600">{savedMediumUrl}</span>
-                  </div>
-                </div>
-              </a>
-            </div>
-          )}
         </div>
 
-        {/* Interested Area */}
-        <div className="interests">
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-800">
-            Interested Area
-          </h2>
-          
-        </div>
-
-        <div className="add-button">
-          {/* Input + Add button */}
-          <div className="flex flex-col sm:flex-row gap-3 mb-5 form-group interests-form">
-            <input
-              type="text"
-              value={newInterest}
-              onChange={(e) => setNewInterest(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder="Add a new interest"
-              className="flex-1 border border-green-400 rounded-lg px-4 py-3 sm:py-2 outline-none text-base focus:ring-2 focus:ring-green-300"
-            />
-            <button
-              onClick={handleAddInterest}
-              className="px-6 py-3 sm:py-2 rounded-lg border border-green-400 font-semibold add-btn text-base whitespace-nowrap"
-            >
-              Add
-            </button>
-          </div>
-
-          {/* Interest tags */}
-          <div className="flex flex-wrap gap-3 tags-wrapper tags">
-            {interests.map((tag, i) => (
-              <span
-                key={i}
-                className="px-4 py-2 border border-green-400 rounded-full text-gray-700 font-semibold tag text-base hover:bg-green-50 transition-colors cursor-default"
-              >
-                {tag}
-              </span>
-            ))}
-          </div>
-        </div>
       </div>
     </div>
   );

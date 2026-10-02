@@ -1,6 +1,7 @@
 import store from '@/store/store';
 import { API_CONFIG, getApiUrl } from '@/config/apiConfig';
 import { refreshTokenSuccess, logoutSuccess } from '@/store/slices/authSlice';
+import { trackApiRequest } from '@/lib/apiLoading';
 
 async function fetchWithAuth(endpoint, opts = {}) {
   const url = getApiUrl(endpoint);
@@ -48,21 +49,22 @@ async function fetchWithAuth(endpoint, opts = {}) {
 }
 
 async function request(endpoint, opts = {}) {
-  const res = await fetchWithAuth(endpoint, opts);
-  if (!res.ok) {
-    let errorData = null;
-    try { errorData = await res.json(); } catch {}
-    const message = errorData?.detail || errorData?.message || res.statusText || 'Request failed';
-    const err = new Error(message);
-    err.status = res.status;
-    throw err;
-  }
-  // try parse json
-  try {
-    return await res.json();
-  } catch {
-    return null;
-  }
+  return trackApiRequest(async () => {
+    const res = await fetchWithAuth(endpoint, opts);
+    if (!res.ok) {
+      let errorData = null;
+      try { errorData = await res.json(); } catch {}
+      const message = errorData?.detail || errorData?.message || res.statusText || 'Request failed';
+      const err = new Error(message);
+      err.status = res.status;
+      throw err;
+    }
+    try {
+      return await res.json();
+    } catch {
+      return null;
+    }
+  });
 }
 
 export default { request };

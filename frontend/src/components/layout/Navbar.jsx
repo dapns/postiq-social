@@ -1,10 +1,28 @@
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from '@/hooks/useAuth';
+import { Search, ArrowUpRight } from 'lucide-react';
+import { useState } from 'react';
+import { API_CONFIG } from '@/config/apiConfig';
+import httpClient from '@/lib/httpClient';
+import { showErrorToast } from '@/utils/toast';
 
 const Navbar = () => {
     const { isAuthenticated, user, logout } = useAuth();
     const navigate = useNavigate();
+    const [query, setQuery] = useState('');
+    const [results, setResults] = useState([]);
+    const [searchMessage, setSearchMessage] = useState('');
+    const [isSearching, setIsSearching] = useState(false);
+    const displayName = user?.userName || user?.email || 'Profile';
+    const initials = displayName
+        .trim()
+        .split(/\s+/)
+        .filter(Boolean)
+        .slice(0, 2)
+        .map((part) => part[0])
+        .join('')
+        .toUpperCase();
 
     const handleLogout = async () => {
         try {
@@ -15,20 +33,84 @@ const Navbar = () => {
         }
     };
 
+    const handleSearch = async (event) => {
+        event.preventDefault();
+        const term = query.trim();
+        if (!term) {
+            setResults([]);
+            setSearchMessage('Enter a name, title, or source to search.');
+            return;
+        }
+
+        setIsSearching(true);
+        setSearchMessage('');
+        try {
+            const params = new URLSearchParams({ query: term, searchBy: 'all', pageNo: '1', pageSize: '20' });
+            const response = await httpClient.request(`${API_CONFIG.ENDPOINTS.HOME}/search?${params}`);
+            setResults(Array.isArray(response?.data) ? response.data : []);
+            if (!response?.data?.length) setSearchMessage('No posts matched that search.');
+        } catch (requestError) {
+            setResults([]);
+            setSearchMessage('');
+            showErrorToast(requestError.message || 'Search is temporarily unavailable.');
+        } finally {
+            setIsSearching(false);
+        }
+    };
+
     return (
-        <nav className="border-b bg-white dark:bg-zinc-950">
-            <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-                <Link to="/" className="text-xl font-bold">
+        <nav className="app-navbar">
+            <div className="container mx-auto min-h-16 px-3 py-2 sm:px-4 flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
+                <Link to="/" className="app-brand text-lg sm:text-xl font-bold shrink-0">
                     PostIQ Social
                 </Link>
-                <div className="flex items-center gap-4">
+                <div className="flex flex-wrap items-center justify-end gap-1 sm:gap-4">
+                    <div className="navbar-search">
+                        <form className="navbar-search__form" onSubmit={handleSearch} role="search">
+                            <label className="sr-only" htmlFor="navbar-search-input">Search posts</label>
+                            <input
+                                id="navbar-search-input"
+                                type="search"
+                                value={query}
+                                onChange={(event) => setQuery(event.target.value)}
+                                placeholder="Search posts..."
+                            />
+                            <Button type="submit" variant="ghost" size="icon" disabled={isSearching} aria-label="Search posts">
+                                <Search size={18} />
+                            </Button>
+                        </form>
+                        {(searchMessage || results.length > 0) && (
+                            <div className="navbar-search__results" aria-live="polite">
+                                {searchMessage && <p className="navbar-search__message" role="status">{searchMessage}</p>}
+                                {results.map((post) => (
+                                    <Link
+                                        className="navbar-search__result"
+                                        to={`/post/${post.id}`}
+                                        key={post.id}
+                                        onClick={() => setResults([])}
+                                    >
+                                        <span>
+                                            <strong>{post.title || 'Untitled post'}</strong>
+                                            <small>{post.author || 'PostIQ member'}</small>
+                                        </span>
+                                        <ArrowUpRight size={16} aria-hidden="true" />
+                                    </Link>
+                                ))}
+                            </div>
+                        )}
+                    </div>
                     <Button variant="ghost" asChild>
                         <Link to="/about">About</Link>
                     </Button>
                     {isAuthenticated ? (
-                        <div className="flex items-center gap-2">
+                        <div className="flex flex-wrap items-center justify-end gap-1 sm:gap-2">
                             <Button variant="ghost" asChild>
-                                <Link to="/profile">{user?.userName || user?.email || 'Profile'}</Link>
+                                <Link to="/profile" className="flex max-w-[38vw] items-center gap-2 sm:max-w-48">
+                                    <span className="grid size-8 shrink-0 place-items-center rounded-full bg-[var(--app-brand-soft)] text-xs font-semibold text-[var(--app-brand)]" aria-hidden="true">
+                                        {initials}
+                                    </span>
+                                    <span className="truncate">{displayName}</span>
+                                </Link>
                             </Button>
                             <Button onClick={handleLogout}>Logout</Button>
                         </div>
