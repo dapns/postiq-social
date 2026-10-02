@@ -1,12 +1,12 @@
-import { FileText, Sparkles } from "lucide-react";
+import { FileText } from "lucide-react";
 import { Link } from "react-router-dom";
+import BrandIdentity from "@/components/common/BrandIdentity";
 
 const AuthLayout = ({ children }) => (
   <div className="auth-container">
     <aside className="auth-showcase">
-      <Link to="/" className="auth-brand" aria-label="PostIQ Social home">
-        <span className="auth-brand-mark"><Sparkles size={17} aria-hidden="true" /></span>
-        <span>PostIQ <span className="auth-brand-light">Social</span></span>
+      <Link to="/" className="auth-brand" aria-label="Footprint home">
+        <BrandIdentity className="auth-brand-identity" />
       </Link>
 
       <div className="auth-showcase-copy">
@@ -17,7 +17,7 @@ const AuthLayout = ({ children }) => (
         </p>
       </div>
 
-      <div className="auth-preview" aria-label="PostIQ draft preview">
+      <div className="auth-preview" aria-label="Footprint draft preview">
         <div className="auth-preview-topline">
           <span><FileText size={15} aria-hidden="true" /> Draft preview</span>
           <span className="auth-preview-status">Ready to refine</span>

@@ -9,7 +9,7 @@ const MainLayout = () => {
                 <Outlet />
             </main>
             <footer className="app-footer px-3 py-5 text-center text-xs sm:px-4 sm:py-6 sm:text-sm">
-                © {new Date().getFullYear()} PostIQ Social. Built with React & Shadcn UI.
+                © {new Date().getFullYear()} Footprint. Built with React & Shadcn UI.
             </footer>
         </div>
     );

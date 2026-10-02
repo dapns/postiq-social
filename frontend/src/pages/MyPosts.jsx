@@ -105,7 +105,7 @@ const MyPosts = () => {
           {myPostsMoreError && (
             <div className="py-4 text-center">
               <p role="alert" className="text-sm text-red-600">{myPostsMoreError}</p>
-              <button type="button" className="mt-2 text-sm font-semibold text-emerald-800 underline" onClick={loadNextPage}>
+              <button type="button" className="mt-2 text-sm font-semibold text-[var(--app-brand)] underline" onClick={loadNextPage}>
                 Try again
               </button>
             </div>
@@ -116,7 +116,7 @@ const MyPosts = () => {
             <div className="py-4 text-center">
               <button
                 type="button"
-                className="rounded-md border border-emerald-800 px-4 py-2 text-sm font-semibold text-emerald-800 disabled:cursor-wait disabled:opacity-60"
+                className="rounded-md border border-[var(--app-brand)] px-4 py-2 text-sm font-semibold text-[var(--app-brand)] disabled:cursor-wait disabled:opacity-60"
                 onClick={loadNextPage}
                 disabled={isLoadingMoreMyPosts}
               >

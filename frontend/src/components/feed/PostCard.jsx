@@ -70,6 +70,14 @@ const PostCard = ({
   }, [initiallyLiked]);
 
   useEffect(() => {
+    setCurrentLikes(likes);
+  }, [likes]);
+
+  useEffect(() => {
+    setCurrentComments(comments);
+  }, [comments]);
+
+  useEffect(() => {
     if (!Array.isArray(commentsList)) return;
     setLoadedComments(commentsList);
     setCommentsLoaded(true);
@@ -86,14 +94,18 @@ const PostCard = ({
         id: comment.id,
         postId: comment.postId,
         userId: comment.userId,
+        parentCommentId: comment.parentCommentId,
         text: comment.content,
         timestamp: comment.createdOn,
         likes: comment.likeCount || 0,
-        author: { name: comment.authorName || 'PostIQ member' },
+        replyCount: comment.replyCount || 0,
+        isLiked: Boolean(comment.isLiked),
+        author: { name: comment.authorName || 'Footprint member' },
       }));
       setLoadedComments(fetchedComments);
       setCommentsLoaded(true);
     } catch (requestError) {
+      setCommentsLoaded(false);
       setActionError(requestError.message || 'Could not load comments.');
     } finally {
       setIsLoadingComments(false);
@@ -179,6 +191,25 @@ const PostCard = ({
     } finally {
       setIsSubmittingAction(false);
     }
+  };
+
+  const handleLikeComment = async (commentId) => {
+    const response = await onLikeComment?.(commentId);
+    if (response?.data === false) {
+      throw new Error('Could not update the comment like.');
+    }
+    await loadComments(true);
+    return response;
+  };
+
+  const handleReplyComment = async (commentId, text) => {
+    const response = await onReplyComment?.(commentId, text);
+    if (response?.data === false) {
+      throw new Error('Could not post your reply.');
+    }
+    setCurrentComments((count) => count + 1);
+    await loadComments(true);
+    return response;
   };
 
   const handleShare = () => {
@@ -485,8 +516,8 @@ const PostCard = ({
           <CommentSection
             comments={loadedComments}
             onAddComment={onComment}
-            onLikeComment={onLikeComment}
-            onReplyComment={onReplyComment}
+            onLikeComment={handleLikeComment}
+            onReplyComment={handleReplyComment}
             isAuthenticated={isAuthenticated}
           />
         ) : commentsLoaded ? (

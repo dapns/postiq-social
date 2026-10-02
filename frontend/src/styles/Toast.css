@@ -68,8 +68,8 @@
 }
 
 .toast-info {
-  border-left-color: #287b9d;
-  background-color: #eaf3f6;
+  border-left-color: var(--app-brand);
+  background-color: var(--app-brand-soft);
 }
 
 /* Toast Content */
@@ -99,7 +99,7 @@
 }
 
 .toast-info .toast-icon {
-  color: #3b82f6;
+  color: var(--app-brand);
 }
 
 .toast-message {
@@ -121,7 +121,7 @@
 }
 
 .toast-info .toast-message {
-  color: #245f78;
+  color: var(--app-brand-hover);
 }
 
 /* Close Button */

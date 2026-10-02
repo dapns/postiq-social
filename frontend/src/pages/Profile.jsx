@@ -85,7 +85,7 @@ export default function ProfileCard() {
             <div className="profile-identity-details" aria-label="Profile details">
               <span className="profile-identity-detail">
                 <Mail size={15} aria-hidden="true" />
-                {profileData?.email || 'PostIQ member'}
+                {profileData?.email || 'Footprint member'}
               </span>
               {profileData?.referralCode && (
                 <span className="profile-identity-detail profile-identity-detail--code">
@@ -164,7 +164,7 @@ export default function ProfileCard() {
                 id="platform"
                 value={selectedPlatform}
                 onChange={(e) => setSelectedPlatform(e.target.value)}
-                className="w-full border border-green-400 rounded-lg px-4 py-2 outline-none text-base focus:ring-2 focus:ring-green-300 bg-white"
+                className="w-full border border-[var(--app-border)] rounded-lg px-4 py-2 outline-none text-base focus:border-[var(--app-brand)] focus:ring-2 focus:ring-[var(--app-brand)] bg-white"
               >
                 <option value="Medium">Medium</option>
               </select>
@@ -181,7 +181,7 @@ export default function ProfileCard() {
                 value={mediumUrl}
                 onChange={(e) => setMediumUrl(e.target.value)}
                 placeholder={`https://medium.com/@your-profile`}
-                className="w-full border border-green-400 rounded-lg px-4 py-3 sm:py-2 outline-none text-base focus:ring-2 focus:ring-green-300"
+                className="w-full border border-[var(--app-border)] rounded-lg px-4 py-3 sm:py-2 outline-none text-base focus:border-[var(--app-brand)] focus:ring-2 focus:ring-[var(--app-brand)]"
                 disabled={isAddingSource}
               />
             </div>
@@ -190,7 +190,7 @@ export default function ProfileCard() {
             <button
               type="submit"
               disabled={isAddingSource || !mediumUrl.trim()}
-              className="px-6 py-3 sm:py-2 rounded-lg border border-green-400 font-semibold text-base bg-green-50 hover:bg-green-100 transition-colors"
+              className="px-6 py-3 sm:py-2 rounded-lg border border-[var(--app-brand)] font-semibold text-base bg-[var(--app-brand)] text-white hover:bg-[var(--app-brand-hover)] transition-colors"
             >
               {isAddingSource ? 'Adding...' : 'Add Social Profile'}
             </button>

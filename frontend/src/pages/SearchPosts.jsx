@@ -94,7 +94,7 @@ function SearchPosts() {
               return (
                 <Link className="search-result" to={`/post/${post.id}`} key={post.id}>
                   <div className="search-result__meta">
-                    <span>{post.author || 'PostIQ member'}</span>
+                    <span>{post.author || 'Footprint member'}</span>
                     <time dateTime={post.postedOn}>
                       {post.postedOn ? new Date(post.postedOn).toLocaleDateString() : ''}
                     </time>
@@ -102,7 +102,7 @@ function SearchPosts() {
                   <h2>{post.title || 'Untitled post'}</h2>
                   <p>{body || post.source || 'Open this post to read more.'}</p>
                   <div className="search-result__footer">
-                    <span>{post.source || 'PostIQ'}</span>
+                    <span>{post.source || 'Footprint'}</span>
                     <span className="search-result__open">Read post <ArrowUpRight size={15} /></span>
                   </div>
                 </Link>

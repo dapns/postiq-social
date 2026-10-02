@@ -211,7 +211,7 @@
 .demo-textarea:focus {
   outline: none;
   border: 1px solid var(--app-brand);
-  box-shadow: 0 0 0 3px rgba(32, 95, 67, 0.12);
+  box-shadow: 0 0 0 3px rgba(32, 115, 191, 0.12);
 }
 
 .modal-footer {
@@ -430,4 +430,3 @@
 .spin {
   animation: spin 1s linear infinite;
 }
-

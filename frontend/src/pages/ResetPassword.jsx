@@ -30,10 +30,6 @@ const ResetPassword = () => {
       newErrors.email = 'Enter a valid email address.';
     }
 
-    if (!token) {
-      newErrors.token = 'Reset token is missing. Please use the link from your email.';
-    }
-
     if (!formData.newPassword) {
       newErrors.newPassword = 'New password is required';
     } else if (formData.newPassword.length < 8) {
@@ -117,11 +113,6 @@ const ResetPassword = () => {
             <div className="auth-header">
               <h1 className="auth-title">Invalid Reset Link</h1>
               <p className="auth-subtitle">The reset link is invalid or expired</p>
-            </div>
-
-            <div className="error-message">
-              <p>It looks like the password reset link you used is invalid or has expired.</p>
-              <p>Please request a new password reset link.</p>
             </div>
 
             <Link to="/forgot-password" className="w-full">
@@ -209,9 +200,6 @@ const ResetPassword = () => {
                 <span className="form-error">{errors.confirmPassword}</span>
               )}
             </div>
-
-            {/* Global Errors */}
-            {errors.token && <div className="form-error-message">{errors.token}</div>}
 
             {/* Submit Button */}
             <Button

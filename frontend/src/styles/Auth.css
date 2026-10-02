@@ -31,27 +31,51 @@
 .auth-brand {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
   width: fit-content;
   color: #fff;
-  font-size: 17px;
-  font-weight: 700;
   text-decoration: none;
 }
 
-.auth-brand-mark {
-  display: grid;
-  width: 34px;
-  height: 34px;
-  place-items: center;
-  border-radius: 7px;
-  background: var(--app-brand-soft);
-  color: var(--app-brand-hover);
+.auth-brand .brand-mark {
+  width: 40px;
+  height: 40px;
+  border-color: rgba(255, 255, 255, 0.2);
+  background: linear-gradient(145deg, #55a0e1, #2876ba);
+  box-shadow: none;
 }
 
-.auth-brand-light {
-  color: #a7d7bd;
-  font-weight: 500;
+.auth-brand .brand-mark svg {
+  width: 26px;
+  height: 26px;
+}
+
+.auth-brand .brand-tagline {
+  color: #c5ddf3;
+}
+
+.auth-brand .brand-name {
+  color: #fff;
+}
+
+.app-brand-identity .brand-mark {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+}
+
+.app-brand-identity .brand-mark svg {
+  width: 24px;
+  height: 24px;
+}
+
+.app-brand-identity .brand-name {
+  font-size: 16px;
+}
+
+@media (max-width: 420px) {
+  .app-brand-identity .brand-tagline {
+    display: none;
+  }
 }
 
 .auth-showcase-copy {
@@ -60,7 +84,7 @@
 
 .auth-eyebrow {
   margin: 0 0 14px;
-  color: #b8dfc8;
+  color: #c5ddf3;
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.12em;
@@ -80,7 +104,7 @@
 .auth-showcase-description {
   max-width: 390px;
   margin: 16px 0 0;
-  color: #d0e0d8;
+  color: #d3e2f0;
   font-size: 14px;
   line-height: 1.7;
 }
@@ -89,8 +113,8 @@
   padding: 20px;
   border: 1px solid rgba(255, 255, 255, 0.62);
   border-radius: 6px;
-  background: #f9fbf8;
-  color: #253a33;
+  background: #f8fbfe;
+  color: #25374b;
 }
 
 .auth-preview-topline,
@@ -104,20 +128,20 @@
 
 .auth-preview-topline > span:first-child {
   justify-content: flex-start;
-  color: #3d5b4e;
+  color: #365674;
   font-size: 12px;
   font-weight: 650;
 }
 
 .auth-preview-status {
-  color: #547461;
+  color: #527492;
   font-size: 11px;
 }
 
 .auth-preview-title {
   max-width: 360px;
   margin: 24px 0 8px;
-  color: #1b3029;
+  color: #1d3045;
   font-family: var(--app-font-display);
   font-size: 22px;
   font-weight: 600;
@@ -126,7 +150,7 @@
 
 .auth-preview-copy {
   margin: 0;
-  color: #64756c;
+  color: #64758a;
   font-size: 12px;
   line-height: 1.6;
 }
@@ -134,11 +158,11 @@
 .auth-preview-rule {
   height: 1px;
   margin: 18px 0 12px;
-  background: #dfe8e1;
+  background: #dfe8f1;
 }
 
 .auth-preview-footer {
-  color: #829188;
+  color: #8290a0;
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.1em;
@@ -146,7 +170,7 @@
 
 .auth-showcase-footnote {
   margin: auto 0 0;
-  color: #d0e0d8;
+  color: #d3e2f0;
   font-size: 12px;
 }
 
@@ -159,7 +183,7 @@
   background: var(--app-surface);
   border: 1px solid var(--app-border);
   border-radius: 8px;
-  box-shadow: 0 14px 40px rgba(27, 55, 43, 0.08);
+  box-shadow: 0 14px 40px rgba(35, 74, 116, 0.08);
   padding: clamp(24px, 4vw, 40px);
   width: 100%;
   max-width: 500px;
@@ -252,7 +276,7 @@
 .form-input:focus {
   outline: none;
   border-color: var(--app-brand);
-  box-shadow: 0 0 0 3px rgba(32, 95, 67, 0.12);
+  box-shadow: 0 0 0 3px rgba(32, 115, 191, 0.12);
   background-color: var(--app-surface);
 }
 
@@ -275,16 +299,6 @@
   font-size: 12px;
   color: var(--app-danger);
   font-weight: 500;
-}
-
-.form-error-message {
-  background-color: #fff0ef;
-  border: 1px solid #f2cfcb;
-  color: #913c37;
-  padding: 12px;
-  border-radius: 8px;
-  font-size: 14px;
-  text-align: center;
 }
 
 /* Button Styles */
@@ -366,7 +380,7 @@
 /* Success/Error Message Styles */
 .success-message {
   background-color: var(--app-brand-soft);
-  border: 1px solid #c7dfce;
+  border: 1px solid #c8def2;
   color: var(--app-brand-hover);
   padding: 16px;
   border-radius: 8px;
@@ -382,22 +396,6 @@
 
 .success-message strong {
   font-weight: 600;
-}
-
-.error-message {
-  background-color: #fff0ef;
-  border: 1px solid #f2cfcb;
-  color: #913c37;
-  padding: 16px;
-  border-radius: 8px;
-  margin-bottom: 2rem;
-  text-align: center;
-  font-size: 14px;
-  line-height: 1.6;
-}
-
-.error-message p {
-  margin: 0.5rem 0;
 }
 
 /* Responsive Design */

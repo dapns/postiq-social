@@ -26,12 +26,15 @@ const About = () => (
   <div className="mx-auto w-full max-w-6xl text-left text-slate-900">
     <section className="grid gap-10 border-b border-slate-200 py-10 sm:py-14 lg:min-h-[430px] lg:grid-cols-[1fr_0.9fr] lg:items-center lg:gap-14">
       <div className="max-w-xl">
-        <p className="mb-4 text-xs font-bold uppercase tracking-[0.16em] text-emerald-800">
+        <p className="mb-4 text-xs font-bold uppercase tracking-[0.16em] text-[var(--app-brand)]">
           About the workspace
         </p>
         <h1 className="text-4xl font-bold leading-tight text-slate-950 sm:text-5xl lg:text-6xl">
-          PostIQ Social
+          Footprint
         </h1>
+        <p className="mt-3 text-lg font-semibold tracking-wide text-[var(--app-brand)]">
+          every post leaves a mark
+        </p>
         <p className="mt-5 max-w-lg text-lg leading-8 text-slate-600">
           A calmer place to turn rough ideas into thoughtful posts. Start with what you have,
           shape the words, then review the result in your feed.
@@ -39,7 +42,7 @@ const About = () => (
         <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
           <Link
             to="/"
-            className="inline-flex min-h-11 items-center gap-2 rounded-md bg-emerald-800 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-emerald-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-800"
+            className="inline-flex min-h-11 items-center gap-2 rounded-md bg-[var(--app-brand)] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[var(--app-brand-hover)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--app-brand)]"
           >
             Open your feed <ArrowRight size={17} aria-hidden="true" />
           </Link>
@@ -47,10 +50,10 @@ const About = () => (
         </div>
       </div>
 
-      <div className="mx-auto w-full max-w-lg border border-slate-200 bg-white shadow-[0_18px_50px_rgba(30,55,45,0.10)]">
+      <div className="mx-auto w-full max-w-lg border border-slate-200 bg-white shadow-[0_18px_50px_rgba(35,74,116,0.10)]">
         <div className="flex items-center justify-between border-b border-slate-200 px-5 py-4">
           <div className="flex items-center gap-2.5">
-            <span className="h-2.5 w-2.5 rounded-full bg-emerald-700" />
+            <span className="h-2.5 w-2.5 rounded-full bg-[var(--app-brand)]" />
             <p className="text-xs font-bold uppercase tracking-[0.12em] text-slate-600">Post composer</p>
           </div>
           <span className="text-xs font-medium text-slate-400">A simple workflow</span>
@@ -65,8 +68,8 @@ const About = () => (
               <FileText size={15} aria-hidden="true" /> Draft material
             </div>
           </div>
-          <div className="border-l-2 border-emerald-700 pl-4">
-            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.12em] text-emerald-800">
+          <div className="border-l-2 border-[var(--app-brand)] pl-4">
+            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.12em] text-[var(--app-brand)]">
               <Sparkles size={15} aria-hidden="true" /> Post preview
             </div>
             <p className="mt-3 text-base font-semibold leading-6 text-slate-900">
@@ -84,7 +87,7 @@ const About = () => (
 
     <section className="py-10 sm:py-14" aria-labelledby="about-steps-title">
       <div className="mb-8 max-w-xl">
-        <p className="text-xs font-bold uppercase tracking-[0.16em] text-emerald-800">A useful rhythm</p>
+        <p className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--app-brand)]">A useful rhythm</p>
         <h2 id="about-steps-title" className="mt-3 text-2xl font-bold text-slate-950 sm:text-3xl">
           From first note to final review
         </h2>
@@ -94,7 +97,7 @@ const About = () => (
           <article key={number} className="border-t border-slate-300 pt-5">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold tabular-nums text-slate-400">{number}</span>
-              <Icon size={19} strokeWidth={1.8} className="text-emerald-800" aria-hidden="true" />
+              <Icon size={19} strokeWidth={1.8} className="text-[var(--app-brand)]" aria-hidden="true" />
             </div>
             <h3 className="mt-5 text-lg font-semibold text-slate-900">{title}</h3>
             <p className="mt-2 max-w-sm text-sm leading-6 text-slate-600">{description}</p>

@@ -8,7 +8,7 @@ import '../styles/Auth.css';
 
 const Login = () => {
   const navigate = useNavigate();
-  const { login, isLoading, error } = useAuth();
+  const { login, isLoading } = useAuth();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -73,7 +73,7 @@ const Login = () => {
         <div className="auth-card">
           <div className="auth-header">
             <h1 className="auth-title">Welcome Back</h1>
-            <p className="auth-subtitle">Sign in to your PostIQ account</p>
+            <p className="auth-subtitle">Sign in to your Footprint account</p>
           </div>
 
           <form onSubmit={handleSubmit} className="auth-form">
@@ -112,9 +112,6 @@ const Login = () => {
               />
               {errors.password && <span className="form-error">{errors.password}</span>}
             </div>
-
-            {/* Global Error Message */}
-            {error && <div className="form-error-message">{error}</div>}
 
             {/* Submit Button */}
             <Button

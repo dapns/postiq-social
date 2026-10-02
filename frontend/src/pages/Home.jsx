@@ -5,7 +5,7 @@ import httpClient from '@/lib/httpClient';
 import { useAuth } from '@/hooks/useAuth';
 import getInitials from '@/utils/getInitials';
 
-const PAGE_SIZE = 5;
+const PAGE_SIZE = 20;
 
 const Home = () => {
     const { isAuthenticated, isAuthInitialized, user } = useAuth();
@@ -124,7 +124,7 @@ const Home = () => {
                 ) : error ? (
                     <div className="py-6 text-center">
                         <p role="alert" className="text-red-600">{error}</p>
-                        <button className="mt-3 text-sm font-semibold text-emerald-800 underline" onClick={() => loadPosts(1, 'initial')}>
+                        <button className="mt-3 text-sm font-semibold text-[var(--app-brand)] underline" onClick={() => loadPosts(1, 'initial')}>
                             Try again
                         </button>
                     </div>
@@ -139,7 +139,7 @@ const Home = () => {
                         {loadMoreError && (
                             <div className="py-4 text-center">
                                 <p role="alert" className="text-sm text-red-600">{loadMoreError}</p>
-                                <button className="mt-2 text-sm font-semibold text-emerald-800 underline" onClick={loadNextPage}>
+                                <button className="mt-2 text-sm font-semibold text-[var(--app-brand)] underline" onClick={loadNextPage}>
                                     Try again
                                 </button>
                             </div>
@@ -152,7 +152,7 @@ const Home = () => {
                             <div className="py-4 text-center">
                                 <button
                                     type="button"
-                                    className="rounded-md border border-emerald-800 px-4 py-2 text-sm font-semibold text-emerald-800 disabled:cursor-wait disabled:opacity-60"
+                                    className="rounded-md border border-[var(--app-brand)] px-4 py-2 text-sm font-semibold text-[var(--app-brand)] disabled:cursor-wait disabled:opacity-60"
                                     onClick={loadNextPage}
                                     disabled={isLoadingMore}
                                 >

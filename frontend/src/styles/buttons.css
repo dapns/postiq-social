@@ -43,7 +43,7 @@ button {
 }
 
 .btn-secondary:hover:not(:disabled) {
-  background: #dce9df;
+  background: var(--app-brand-soft);
 }
 
 .btn-secondary:disabled {
@@ -115,7 +115,7 @@ button {
 }
 
 .icon-btn:hover {
-  border-color: #a9b9ae;
+  border-color: var(--app-brand);
   background: var(--app-canvas);
 }
 
@@ -271,8 +271,8 @@ button {
 }
 
 .reply-submit:disabled {
-  background-color: #e8ede9;
-  color: #89988f;
+  background-color: var(--app-border);
+  color: var(--app-muted);
   cursor: not-allowed;
 }
 

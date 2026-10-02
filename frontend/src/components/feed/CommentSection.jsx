@@ -11,7 +11,12 @@ const CommentSection = ({
   isAuthenticated = false,
 }) => {
   const [displayCount, setDisplayCount] = useState(2);
-  const [likedComments, setLikedComments] = useState(new Set());
+  const [likedComments, setLikedComments] = useState(
+    () => new Set(comments.filter((comment) => comment.isLiked).map((comment) => comment.id))
+  );
+  const [commentLikes, setCommentLikes] = useState(
+    () => new Map(comments.map((comment) => [comment.id, comment.likes || 0]))
+  );
   const [replyingTo, setReplyingTo] = useState(null);
   const [replyText, setReplyText] = useState('');
   const [pendingCommentId, setPendingCommentId] = useState(null);
@@ -19,6 +24,11 @@ const CommentSection = ({
 
   const displayedComments = comments.slice(0, displayCount);
   const hasMoreComments = displayCount < comments.length;
+
+  React.useEffect(() => {
+    setLikedComments(new Set(comments.filter((comment) => comment.isLiked).map((comment) => comment.id)));
+    setCommentLikes(new Map(comments.map((comment) => [comment.id, comment.likes || 0])));
+  }, [comments]);
 
   const handleLoadMore = () => {
     setDisplayCount((prev) => prev + 5);
@@ -34,12 +44,29 @@ const CommentSection = ({
       newLiked.add(commentId);
     }
     setLikedComments(newLiked);
+    setCommentLikes((currentLikes) => {
+      const nextLikes = new Map(currentLikes);
+      const currentCount = nextLikes.get(commentId) || 0;
+      nextLikes.set(commentId, Math.max(0, currentCount + (wasLiked ? -1 : 1)));
+      return nextLikes;
+    });
     setPendingCommentId(commentId);
     setActionError('');
     try {
       await onLikeComment?.(commentId);
     } catch (requestError) {
-      setLikedComments(likedComments);
+      setLikedComments((currentLikes) => {
+        const nextLiked = new Set(currentLikes);
+        if (wasLiked) nextLiked.add(commentId);
+        else nextLiked.delete(commentId);
+        return nextLiked;
+      });
+      setCommentLikes((currentLikes) => {
+        const nextLikes = new Map(currentLikes);
+        const currentCount = nextLikes.get(commentId) || 0;
+        nextLikes.set(commentId, Math.max(0, currentCount + (wasLiked ? 1 : -1)));
+        return nextLikes;
+      });
       setActionError(requestError.message || 'Could not update the comment like.');
     } finally {
       setPendingCommentId(null);
@@ -113,7 +140,7 @@ const CommentSection = ({
                   title={isAuthenticated ? 'Reply' : 'Log in to reply'}
                   onClick={() => setReplyingTo(replyingTo === comment.id ? null : comment.id)}
                 >
-                  Reply
+                  Reply{comment.replyCount > 0 ? ` ${comment.replyCount}` : ''}
                 </button>
                 <button
                   className={`comment-action-btn like-comment ${likedComments.has(comment.id) ? 'liked' : ''}`}
@@ -126,7 +153,7 @@ const CommentSection = ({
                   ) : (
                     <Heart className="comment-heart-icon" size={14} />
                   )}
-                  {comment.likes || 0}
+                  {commentLikes.get(comment.id) || 0}
                 </button>
               </div>
 

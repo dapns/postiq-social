@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#398bd1"/>
+      <stop offset="1" stop-color="#185b99"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="18" fill="url(#bg)"/>
+  <g fill="#fff">
+    <ellipse cx="19" cy="41" rx="6" ry="10" transform="rotate(-22 19 41)"/>
+    <ellipse cx="13" cy="28" rx="2.4" ry="3.7" transform="rotate(-28 13 28)"/>
+    <ellipse cx="17" cy="24" rx="2.6" ry="3.7" transform="rotate(-16 17 24)"/>
+    <ellipse cx="22" cy="24" rx="2.5" ry="3.5" transform="rotate(5 22 24)"/>
+    <ellipse cx="26" cy="28" rx="2.2" ry="3.1" transform="rotate(20 26 28)"/>
+    <ellipse cx="44" cy="38" rx="6" ry="10" transform="rotate(22 44 38)"/>
+    <ellipse cx="38" cy="25" rx="2.2" ry="3.1" transform="rotate(-20 38 25)"/>
+    <ellipse cx="42" cy="21" rx="2.5" ry="3.5" transform="rotate(-5 42 21)"/>
+    <ellipse cx="47" cy="21" rx="2.6" ry="3.7" transform="rotate(16 47 21)"/>
+    <ellipse cx="51" cy="25" rx="2.4" ry="3.7" transform="rotate(28 51 25)"/>
+  </g>
+  <circle cx="51" cy="12" r="3" fill="#f4c67a"/>
+</svg>

@@ -39,7 +39,7 @@ function PostDetails() {
         text: comment.content,
         timestamp: comment.createdOn,
         likes: comment.likeCount,
-        author: { name: comment.authorName || 'PostIQ member' },
+        author: { name: comment.authorName || 'Footprint member' },
       })));
       setError('');
     } catch (requestError) {
@@ -179,7 +179,7 @@ function PostDetails() {
       <article className="post-detail">
         <header className="post-detail__header">
           <div className="post-detail__byline">
-            <span>{post.author || 'PostIQ member'}</span>
+            <span>{post.author || 'Footprint member'}</span>
             {postedDate && <time dateTime={post.postedOn}>{postedDate}</time>}
           </div>
           {post.source && <p className="post-detail__source">{post.source}</p>}

@@ -2,10 +2,11 @@ import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from '@/hooks/useAuth';
 import { Search, ArrowUpRight } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { API_CONFIG } from '@/config/apiConfig';
 import httpClient from '@/lib/httpClient';
 import { showErrorToast } from '@/utils/toast';
+import BrandIdentity from '@/components/common/BrandIdentity';
 
 const Navbar = () => {
     const { isAuthenticated, user, logout } = useAuth();
@@ -14,6 +15,8 @@ const Navbar = () => {
     const [results, setResults] = useState([]);
     const [searchMessage, setSearchMessage] = useState('');
     const [isSearching, setIsSearching] = useState(false);
+    const [isSearchPanelOpen, setIsSearchPanelOpen] = useState(false);
+    const searchContainerRef = useRef(null);
     const displayName = user?.userName || user?.email || 'Profile';
     const initials = displayName
         .trim()
@@ -35,6 +38,7 @@ const Navbar = () => {
 
     const handleSearch = async (event) => {
         event.preventDefault();
+        setIsSearchPanelOpen(true);
         const term = query.trim();
         if (!term) {
             setResults([]);
@@ -58,14 +62,41 @@ const Navbar = () => {
         }
     };
 
+    useEffect(() => {
+        const closeSearchPanel = () => {
+            setIsSearchPanelOpen(false);
+            setResults([]);
+            setSearchMessage('');
+        };
+
+        const handleOutsidePointerDown = (event) => {
+            if (!searchContainerRef.current?.contains(event.target)) {
+                closeSearchPanel();
+            }
+        };
+
+        const handleSearchKeyDown = (event) => {
+            if (event.key === 'Escape') {
+                closeSearchPanel();
+            }
+        };
+
+        document.addEventListener('pointerdown', handleOutsidePointerDown);
+        document.addEventListener('keydown', handleSearchKeyDown);
+        return () => {
+            document.removeEventListener('pointerdown', handleOutsidePointerDown);
+            document.removeEventListener('keydown', handleSearchKeyDown);
+        };
+    }, []);
+
     return (
         <nav className="app-navbar">
             <div className="container mx-auto min-h-16 px-3 py-2 sm:px-4 flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
-                <Link to="/" className="app-brand text-lg sm:text-xl font-bold shrink-0">
-                    PostIQ Social
+                <Link to="/" className="app-brand shrink-0" aria-label="Footprint home">
+                    <BrandIdentity className="app-brand-identity" />
                 </Link>
                 <div className="flex flex-wrap items-center justify-end gap-1 sm:gap-4">
-                    <div className="navbar-search">
+                    <div className="navbar-search" ref={searchContainerRef}>
                         <form className="navbar-search__form" onSubmit={handleSearch} role="search">
                             <label className="sr-only" htmlFor="navbar-search-input">Search posts</label>
                             <input
@@ -79,7 +110,7 @@ const Navbar = () => {
                                 <Search size={18} />
                             </Button>
                         </form>
-                        {(searchMessage || results.length > 0) && (
+                        {isSearchPanelOpen && (searchMessage || results.length > 0) && (
                             <div className="navbar-search__results" aria-live="polite">
                                 {searchMessage && <p className="navbar-search__message" role="status">{searchMessage}</p>}
                                 {results.map((post) => (
@@ -87,11 +118,11 @@ const Navbar = () => {
                                         className="navbar-search__result"
                                         to={`/post/${post.id}`}
                                         key={post.id}
-                                        onClick={() => setResults([])}
+                                        onClick={() => setIsSearchPanelOpen(false)}
                                     >
                                         <span>
                                             <strong>{post.title || 'Untitled post'}</strong>
-                                            <small>{post.author || 'PostIQ member'}</small>
+                                            <small>{post.author || 'Footprint member'}</small>
                                         </span>
                                         <ArrowUpRight size={16} aria-hidden="true" />
                                     </Link>
