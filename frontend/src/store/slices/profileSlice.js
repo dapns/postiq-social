@@ -30,6 +30,17 @@ export const addProfileSource = createAsyncThunk(
   },
 );
 
+export const refreshProfileSources = createAsyncThunk(
+  'profile/refreshSources',
+  async (unusedArgument, { rejectWithValue }) => {
+    try {
+      return await httpClient.request(API_CONFIG.ENDPOINTS.PROFILE.REFRESH);
+    } catch (requestError) {
+      return rejectWithValue(requestError.message || 'Unable to refresh this source.');
+    }
+  },
+);
+
 export const fetchMyPosts = createAsyncThunk(
   'profile/fetchMyPosts',
   async ({ pageNo = 1, pageSize = 20 } = {}, { rejectWithValue }) => {
@@ -51,6 +62,7 @@ const profileSlice = createSlice({
     isAddingSource: false,
     addSourceError: null,
     addSourceSuccess: false,
+    isRefreshingSources: false,
     myPosts: null,
     isLoadingMyPosts: false,
     isLoadingMoreMyPosts: false,
@@ -65,6 +77,7 @@ const profileSlice = createSlice({
       state.isAddingSource = false;
       state.addSourceError = null;
       state.addSourceSuccess = false;
+      state.isRefreshingSources = false;
       state.myPosts = null;
       state.isLoadingMyPosts = false;
       state.isLoadingMoreMyPosts = false;
@@ -98,6 +111,15 @@ const profileSlice = createSlice({
       .addCase(addProfileSource.rejected, (state, action) => {
         state.isAddingSource = false;
         state.addSourceError = action.payload || action.error.message || 'Unable to add this source.';
+      })
+      .addCase(refreshProfileSources.pending, (state) => {
+        state.isRefreshingSources = true;
+      })
+      .addCase(refreshProfileSources.fulfilled, (state) => {
+        state.isRefreshingSources = false;
+      })
+      .addCase(refreshProfileSources.rejected, (state) => {
+        state.isRefreshingSources = false;
       })
       .addCase(fetchMyPosts.pending, (state, action) => {
         const pageNo = action.meta.arg?.pageNo ?? 1;

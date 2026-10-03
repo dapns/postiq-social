@@ -125,6 +125,7 @@
   white-space: nowrap;
 }
 
+.profile-source-item__refresh,
 .profile-source-item__open {
   display: grid;
   width: 34px;
@@ -133,13 +134,39 @@
   place-items: center;
   border-radius: 5px;
   color: var(--app-muted);
-  text-decoration: none;
+  background: transparent;
   transition: color 140ms ease, background-color 140ms ease;
 }
 
+.profile-source-item__refresh {
+  padding: 0;
+  border: 0;
+  cursor: pointer;
+}
+
+.profile-source-item__open {
+  text-decoration: none;
+}
+
+.profile-source-item__refresh:hover:not(:disabled),
 .profile-source-item__open:hover {
   color: var(--app-brand);
   background: var(--app-brand-soft);
+}
+
+.profile-source-item__refresh:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.profile-source-item__refresh-icon--spinning {
+  animation: profile-source-refresh-spin 900ms linear infinite;
+}
+
+@keyframes profile-source-refresh-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .profile-sources__empty {

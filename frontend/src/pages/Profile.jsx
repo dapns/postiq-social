@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import "../styles/Profile.css";
-import { addProfileSource, fetchProfile } from '@/store/slices/profileSlice';
-import { ArrowUpRight, ExternalLink, Hash, Link2, Mail } from 'lucide-react';
+import { addProfileSource, fetchProfile, refreshProfileSources } from '@/store/slices/profileSlice';
+import { ArrowUpRight, ExternalLink, Hash, Link2, Mail, RefreshCw } from 'lucide-react';
 import getInitials from '@/utils/getInitials';
+import { showErrorToast, showSuccessToast } from '@/utils/toast';
 
 const getSafeUrl = (value) => {
   try {
@@ -25,6 +26,7 @@ export default function ProfileCard() {
     isAddingSource,
     addSourceError,
     addSourceSuccess,
+    isRefreshingSources,
   } = useSelector((state) => state.profile);
 
   useEffect(() => {
@@ -55,6 +57,16 @@ export default function ProfileCard() {
       await dispatch(fetchProfile()).unwrap();
     } catch {
       // The request error is displayed from the profile slice.
+    }
+  };
+
+  const handleRefreshSources = async () => {
+    try {
+      await dispatch(refreshProfileSources()).unwrap();
+      showSuccessToast('Source refresh started.');
+    } catch (requestError) {
+      const message = typeof requestError === 'string' ? requestError : requestError?.message;
+      showErrorToast(message || 'Unable to refresh this source.');
     }
   };
 
@@ -131,6 +143,20 @@ export default function ProfileCard() {
                       <strong>{job.source || 'Source'}</strong>
                       <span className="profile-source-item__url" title={job.baseUrl}>{job.baseUrl}</span>
                     </div>
+                    <button
+                      type="button"
+                      className="profile-source-item__refresh"
+                      onClick={handleRefreshSources}
+                      disabled={isRefreshingSources}
+                      aria-label={`Refresh ${job.source || 'source'}`}
+                      title={isRefreshingSources ? 'Refreshing source' : 'Refresh source'}
+                    >
+                      <RefreshCw
+                        size={16}
+                        aria-hidden="true"
+                        className={isRefreshingSources ? 'profile-source-item__refresh-icon--spinning' : undefined}
+                      />
+                    </button>
                     {safeUrl && (
                       <a
                         className="profile-source-item__open"

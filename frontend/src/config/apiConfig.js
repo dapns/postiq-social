@@ -37,6 +37,7 @@ export const API_CONFIG = {
       ME: '/api/Profile/me',
       MY_POSTS: '/api/Profile/my-posts',
       ADD_SOURCE: '/api/Profile',
+      REFRESH: '/api/Profile/refresh',
     },
     HOME: '/api/Home',
   },
