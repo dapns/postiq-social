@@ -40,6 +40,7 @@ export const API_CONFIG = {
       REFRESH: '/api/Profile/refresh',
     },
     HOME: '/api/Home',
+    HOME_POSTS_BY_EMAIL: '/api/Home/GetPostsByEmail',
   },
 };
 

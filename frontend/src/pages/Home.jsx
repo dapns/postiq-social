@@ -4,11 +4,17 @@ import { API_CONFIG } from '@/config/apiConfig';
 import httpClient from '@/lib/httpClient';
 import { useAuth } from '@/hooks/useAuth';
 import getInitials from '@/utils/getInitials';
+import { useLocation } from 'react-router-dom';
 
 const PAGE_SIZE = 20;
 
 const Home = () => {
     const { isAuthenticated, isAuthInitialized, user } = useAuth();
+    const location = useLocation();
+    const emailSearch = typeof location.state?.emailSearch === 'string'
+        ? location.state.emailSearch.trim()
+        : '';
+    const queryKey = emailSearch || '__home_feed__';
     const [pages, setPages] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isLoadingMore, setIsLoadingMore] = useState(false);
@@ -20,11 +26,14 @@ const Home = () => {
     const nextPageRef = useRef(1);
     const loadingPagesRef = useRef(new Set());
     const isMountedRef = useRef(false);
+    const queryKeyRef = useRef(queryKey);
     pagesRef.current = pages;
 
     const loadPosts = useCallback(async (page, direction = 'next') => {
-        if (loadingPagesRef.current.has(page) || pagesRef.current.some((group) => group.page === page)) return;
-        loadingPagesRef.current.add(page);
+        const requestKey = emailSearch || '__home_feed__';
+        const pageKey = `${requestKey}:${page}`;
+        if (loadingPagesRef.current.has(pageKey) || pagesRef.current.some((group) => group.queryKey === requestKey && group.page === page)) return;
+        loadingPagesRef.current.add(pageKey);
 
         if (direction === 'initial') {
             setIsLoading(true);
@@ -35,11 +44,20 @@ const Home = () => {
         }
 
         try {
+            const endpoint = emailSearch
+                ? API_CONFIG.ENDPOINTS.HOME_POSTS_BY_EMAIL
+                : API_CONFIG.ENDPOINTS.HOME;
+            const params = new URLSearchParams({
+                pageNo: String(page),
+                pageSize: String(PAGE_SIZE),
+            });
+            if (emailSearch) params.set('email', emailSearch);
+
             const response = await httpClient.request(
-                `${API_CONFIG.ENDPOINTS.HOME}?pageNo=${page}&pageSize=${PAGE_SIZE}`,
+                `${endpoint}?${params}`,
                 { method: 'GET' }
             );
-            if (!isMountedRef.current) return;
+            if (!isMountedRef.current || queryKeyRef.current !== requestKey) return;
 
             const apiPosts = Array.isArray(response?.data) ? response.data : [];
             const mappedPosts = apiPosts.map((post) => {
@@ -63,28 +81,28 @@ const Home = () => {
                 };
             });
 
-            setPages((currentPages) => currentPages.some((group) => group.page === page)
+            setPages((currentPages) => currentPages.some((group) => group.queryKey === requestKey && group.page === page)
                 ? currentPages
-                : [...currentPages, { page, posts: mappedPosts }]);
+                : [...currentPages, { page, queryKey: requestKey, posts: mappedPosts }]);
 
             if (page === nextPageRef.current) {
                 nextPageRef.current = page + 1;
                 setHasMore(Boolean(response?.hasNext));
             }
         } catch (requestError) {
-            if (isMountedRef.current) {
+            if (isMountedRef.current && queryKeyRef.current === requestKey) {
                 const message = requestError.message || 'Unable to load posts.';
                 if (direction === 'initial') setError(message);
                 else setLoadMoreError(message);
             }
         } finally {
-            loadingPagesRef.current.delete(page);
-            if (isMountedRef.current) {
+            loadingPagesRef.current.delete(pageKey);
+            if (isMountedRef.current && queryKeyRef.current === requestKey) {
                 if (direction === 'initial') setIsLoading(false);
                 else setIsLoadingMore(false);
             }
         }
-    }, []);
+    }, [emailSearch]);
 
     const currentUserName = isAuthenticated ? user?.userName || user?.email || '' : '';
     const currentUser = {
@@ -97,11 +115,19 @@ const Home = () => {
     useEffect(() => {
         if (!isAuthInitialized) return undefined;
         isMountedRef.current = true;
+        queryKeyRef.current = queryKey;
+        loadingPagesRef.current.clear();
+        nextPageRef.current = 1;
+        pagesRef.current = [];
+        setPages([]);
+        setHasMore(false);
+        setError('');
+        setLoadMoreError('');
         loadPosts(1, 'initial');
         return () => {
             isMountedRef.current = false;
         };
-    }, [isAuthInitialized, loadPosts]);
+    }, [isAuthInitialized, loadPosts, queryKey]);
 
     useEffect(() => {
         const sentinel = bottomSentinelRef.current;
@@ -119,6 +145,11 @@ const Home = () => {
     return (
         <div className="home-page">
             <div className="w-full max-w-3xl mx-auto px-0 sm:px-2">
+                {emailSearch && (
+                    <h1 className="mb-4 text-lg font-semibold text-gray-800">
+                        Posts by {emailSearch}
+                    </h1>
+                )}
                 {isLoading ? (
                     <p role="status" className="py-6 text-center text-gray-500">Loading posts...</p>
                 ) : error ? (
@@ -130,6 +161,9 @@ const Home = () => {
                     </div>
                 ) : (
                     <>
+                        {emailSearch && pages.every((group) => group.posts.length === 0) && (
+                            <p className="py-6 text-center text-gray-500">No posts found for this email.</p>
+                        )}
                         <PostFeed
                             pages={pages}
                             currentUser={currentUser}

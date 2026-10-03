@@ -46,6 +46,14 @@ const Navbar = () => {
             return;
         }
 
+        if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(term)) {
+            setResults([]);
+            setSearchMessage('');
+            setIsSearchPanelOpen(false);
+            navigate('/', { state: { emailSearch: term } });
+            return;
+        }
+
         setIsSearching(true);
         setSearchMessage('');
         try {
