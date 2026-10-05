@@ -233,12 +233,40 @@
 .auth-form--register {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-areas:
+    "email referral"
+    "first last"
+    "password confirm"
+    "submit submit";
   gap: 1rem;
 }
 
-.auth-form--register > :first-child,
+.auth-form--register > :nth-child(1) {
+  grid-area: email;
+}
+
+.auth-form--register > :nth-child(2) {
+  grid-area: first;
+}
+
+.auth-form--register > :nth-child(3) {
+  grid-area: last;
+}
+
+.auth-form--register > :nth-child(4) {
+  grid-area: referral;
+}
+
+.auth-form--register > :nth-child(5) {
+  grid-area: password;
+}
+
+.auth-form--register > :nth-child(6) {
+  grid-area: confirm;
+}
+
 .auth-form--register > :last-child {
-  grid-column: 1 / -1;
+  grid-area: submit;
 }
 
 .form-group {

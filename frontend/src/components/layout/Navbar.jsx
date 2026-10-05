@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from '@/hooks/useAuth';
-import { Search, ArrowUpRight } from 'lucide-react';
+import { Search, ArrowUpRight, Power } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { API_CONFIG } from '@/config/apiConfig';
 import httpClient from '@/lib/httpClient';
@@ -151,12 +151,27 @@ const Navbar = () => {
                                     <span className="truncate">{displayName}</span>
                                 </Link>
                             </Button>
-                            <Button onClick={handleLogout}>Logout</Button>
+                            <Button
+                                type="button"
+                                variant="destructive"
+                                size="icon"
+                                className="rounded-full"
+                                onClick={handleLogout}
+                                aria-label="Log out"
+                                title="Log out"
+                            >
+                                <Power size={18} aria-hidden="true" />
+                            </Button>
                         </div>
                     ) : (
-                        <Button asChild>
-                            <Link to="/login">Login</Link>
-                        </Button>
+                        <div className="flex items-center gap-1 sm:gap-2">
+                            <Button variant="ghost" asChild>
+                                <Link to="/login">Login</Link>
+                            </Button>
+                            <Button asChild>
+                                <Link to="/register">Sign up</Link>
+                            </Button>
+                        </div>
                     )}
                 </div>
             </div>

@@ -32,7 +32,7 @@ export const useAuth = () => {
     (state) => state.auth
   );
 
-  const register = async (email, password, firstName, middleName, lastName, phoneNumber, referralCode) => {
+  const register = async (email, password, firstName, middleName, lastName, referralCode) => {
     dispatch(registerStart());
     try {
       const response = await AuthService.register({
@@ -41,7 +41,6 @@ export const useAuth = () => {
         firstName,
         middleName,
         lastName,
-        phoneNumber,
         referralCode,
       });
       dispatch(registerSuccess());
