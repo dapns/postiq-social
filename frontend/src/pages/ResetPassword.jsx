@@ -12,12 +12,13 @@ const ResetPassword = () => {
   const { resetPassword, isLoading } = useAuth();
 
   const token = searchParams.get('token') || '';
+  const emailFromUrl = searchParams.get('email') || '';
 
-  const [formData, setFormData] = useState({
-    email: '',
+  const [formData, setFormData] = useState(() => ({
+    email: emailFromUrl,
     newPassword: '',
     confirmPassword: '',
-  });
+  }));
   const [errors, setErrors] = useState({});
   const [submitted, setSubmitted] = useState(false);
 
@@ -32,8 +33,8 @@ const ResetPassword = () => {
 
     if (!formData.newPassword) {
       newErrors.newPassword = 'New password is required';
-    } else if (formData.newPassword.length < 8) {
-      newErrors.newPassword = 'Password must be at least 8 characters';
+    } else if (formData.newPassword.length < 6) {
+      newErrors.newPassword = 'Password must be at least 6 characters';
     } else if (formData.newPassword.length > 200) {
       newErrors.newPassword = 'Password must be less than 200 characters';
     }
@@ -156,6 +157,7 @@ const ResetPassword = () => {
                 autoComplete="email"
                 className={`form-input ${errors.email ? 'error' : ''}`}
                 disabled={isLoading}
+                readOnly={Boolean(emailFromUrl)}
                 required
               />
               {errors.email && <span className="form-error">{errors.email}</span>}
@@ -172,7 +174,8 @@ const ResetPassword = () => {
                 name="newPassword"
                 value={formData.newPassword}
                 onChange={handleChange}
-                placeholder="Enter a strong password (min 8 characters)"
+                placeholder="Enter a strong password (min 6 characters)"
+                minLength={6}
                 className={`form-input ${errors.newPassword ? 'error' : ''}`}
                 disabled={isLoading}
               />
@@ -193,6 +196,7 @@ const ResetPassword = () => {
                 value={formData.confirmPassword}
                 onChange={handleChange}
                 placeholder="Confirm your new password"
+                minLength={6}
                 className={`form-input ${errors.confirmPassword ? 'error' : ''}`}
                 disabled={isLoading}
               />

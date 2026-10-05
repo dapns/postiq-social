@@ -7,7 +7,7 @@ export const API_CONFIG = {
   // Change this to your backend API URL
   // e.g., 'http://localhost:5255' for local .NET backend
   // e.g., 'https://api.postiq.com' for production
-  //API_BASE_URL: 'https://localhost:7110/',
+  //API_BASE_URL: 'https://localhost:44335/',
   API_BASE_URL: 'https://footprintapi.runasp.net/',
   
   // API Endpoints
